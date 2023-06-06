@@ -1,0 +1,20 @@
+PARA ACTIVAR EL AMBIENTE
+cd a env\Scripts
+ejecutar el comando ".\activate"
+
+PARA INSTALAR DEPENDENCIAS EN EL PROYECTO
+(con el ambiente activado)
+cd a la carpeta donde se encuentre el archivo "manage.py"
+ejecutar el comando "pip install django mysqlclient pymysql" 
+estas dependecias son las necesarias para el proyecto
+
+PARA CREAR LA BD HACIENDO MIGRACIONES
+(con el ambiente activado)
+crear la bd en workbench, con el nombre "siaca". si esta creada ya y no funciona borra el schema y crealo de nuevo
+cd a la carpeta donde se encuentre el archivo "manage.py"
+python manage.py migrate
+python manage.py makemigrations
+python manage.py migrate  //de nuevo,si
+
+PARA CORRER EL PROYECTO
+python manage.py runserver
