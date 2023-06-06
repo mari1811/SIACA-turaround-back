@@ -1,0 +1,8 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+#migraciones
+/api/migrations
+/api/_pycache_
+
+#cache
+/siaca_turnaround_back/pycache
