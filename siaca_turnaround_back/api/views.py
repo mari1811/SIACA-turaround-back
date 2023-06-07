@@ -28,8 +28,28 @@ class MaquinariaView(View):
         datos={'mensaje':'Success'}
         return JsonResponse(datos)
 
-    def put(self, request):
-        pass
+    def put(self, request, id):
+        jsondata = json.loads(request.body)
+        maquinarias = list(maquinaria.objects.filter(id=id).values())
+        if len(maquinarias)>0:
+            maquina = maquinaria.objects.get(id=id)
+            maquina.identificador = jsondata['identificador']
+            maquina.modelo = jsondata['modelo']
+            maquina.combustible = jsondata['combustible']
+            maquina.estado = jsondata['estado']
+            maquina.categoria = jsondata['categoria']
+            maquina.imagen = jsondata['imagen']
+            maquina.save()
+            datos={'mensaje':'Success'}
+        else:
+            datos={'mensaje':'No hay maquinarias'}
+        return JsonResponse(datos)
 
-    def delete(self, request):
-        pass
+    def delete(self, request, id):
+        maquinarias = list(maquinaria.objects.filter(id=id).values())
+        if len(maquinarias)>0:
+            maquinaria.objects.filter(id=id).delete()
+            datos={'mensaje':'Success'}
+        else:
+            datos={'mensaje':'No hay maquinarias'}
+        return JsonResponse(datos)
