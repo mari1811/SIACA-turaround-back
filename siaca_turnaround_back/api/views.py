@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import render
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from .models import maquinaria, codigos_demora, turnaround, usuario, aerolinea, plantilla, vuelo
+from .models import maquinaria, codigos_demora, turnaround, usuario, aerolinea, plantilla, vuelo, tarea, subtarea
 import json
 
 # Create your views here.
@@ -108,17 +108,17 @@ class UsuarioView(View):
         jsondata = json.loads(request.body)
         usuarios = list(usuario.objects.filter(id=id).values())
         if len(usuarios)>0:
-            user = usuario.objects.get(id=id)
-            user.cedula = jsondata['cedula']
-            user.cargo = jsondata['cargo']
-            user.departameto = jsondata['departamento']
-            user.correo = jsondata['correo']
-            user.telefono = jsondata['telefono']
-            user.turno = jsondata['turno']
-            user.contrasena = jsondata['contrasena']
-            user.estado = jsondata['estado']
-            user.imagen = jsondata['imagen']
-            user.save()
+            dato = usuario.objects.get(id=id)
+            dato.cedula = jsondata['cedula']
+            dato.cargo = jsondata['cargo']
+            dato.departameto = jsondata['departamento']
+            dato.correo = jsondata['correo']
+            dato.telefono = jsondata['telefono']
+            dato.turno = jsondata['turno']
+            dato.contrasena = jsondata['contrasena']
+            dato.estado = jsondata['estado']
+            dato.imagen = jsondata['imagen']
+            dato.save()
             datos={'mensaje':'Success'}
         else:
             datos={'mensaje':'No existe el usuario'}
@@ -158,13 +158,13 @@ class AerolineaView(View):
         jsondata = json.loads(request.body)
         aerolineas = list(aerolinea.objects.filter(id=id).values())
         if len(aerolineas)>0:
-            user = aerolinea.objects.get(id=id)
-            user.nombre = jsondata['nombre']
-            user.correo = jsondata['correo']
-            user.telefono=jsondata['telefono']
-            user.codigo=jsondata['codigo']
-            user.imagen = jsondata['imagen']
-            user.save()
+            dato = aerolinea.objects.get(id=id)
+            dato.nombre = jsondata['nombre']
+            dato.correo = jsondata['correo']
+            dato.telefono=jsondata['telefono']
+            dato.codigo=jsondata['codigo']
+            dato.imagen = jsondata['imagen']
+            dato.save()
             datos={'mensaje':'Success'}
         else:
             datos={'mensaje':'No existe la aerolinea'}
@@ -203,9 +203,9 @@ class PlantillaView(View):
         jsondata = json.loads(request.body)
         plantillas = list(plantilla.objects.filter(id=id).values())
         if len(plantillas)>0:
-            user = plantilla.objects.get(id=id)
-            user.titulo = jsondata['titulo']
-            user.save()
+            dato = plantilla.objects.get(id=id)
+            dato.titulo = jsondata['titulo']
+            dato.save()
             datos={'mensaje':'Success'}
         else:
             datos={'mensaje':'No existe la plantilla'}
@@ -218,6 +218,95 @@ class PlantillaView(View):
             datos={'mensaje':'Success'}
         else:
             datos={'mensaje':'No existe la plantilla'}
+        return JsonResponse(datos)
+    
+
+class TareaView(View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get(self, request):
+        tareas = list(tarea.objects.values())
+        if len(tareas)>0:
+            datos={'mensaje':'Success','tareas':tareas}
+        else:
+            datos={'mensaje':'No hay tareas'}
+        return JsonResponse(datos)
+    
+    def post(self, request):
+        jsondata = json.loads(request.body)
+        tarea.objects.create(titulo=jsondata['titulo'])
+        datos={'mensaje':'Success'}
+        return JsonResponse(datos)
+    
+    def put(self, request, id):
+        jsondata = json.loads(request.body)
+        tareas = list(tarea.objects.filter(id=id).values())
+        if len(tareas)>0:
+            dato = tarea.objects.get(id=id)
+            dato.titulo = jsondata['titulo']
+            dato.save()
+            datos={'mensaje':'Success'}
+        else:
+            datos={'mensaje':'No existe la tarea'}
+        return JsonResponse(datos)
+    
+    def delete(self, request, id):
+        tareas = list(tarea.objects.filter(id=id).values())
+        if len(tareas)>0:
+            tarea.objects.filter(id=id).delete()
+            datos={'mensaje':'Success'}
+        else:
+            datos={'mensaje':'No existe la tarea'}
+        return JsonResponse(datos)
+    
+
+class SubtareaView(View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get(self, request):
+        subtareas = list(subtarea.objects.values())
+        if len(subtareas)>0:
+            datos={'mensaje':'Success','subtareas':subtareas}
+        else:
+            datos={'mensaje':'No hay subtareas'}
+        return JsonResponse(datos)
+    
+    def post(self, request):
+        jsondata = json.loads(request.body)
+        subtarea.objects.create(titulo=jsondata['titulo'], tipo=jsondata['tipo'], imagen=jsondata['imagen'], hora_inicio=jsondata['hora_inicio'], hora_fin=jsondata['hora_fin'], comentario=jsondata['comentario'])
+        datos={'mensaje':'Success'}
+        return JsonResponse(datos)
+    
+    def put(self, request, id):
+        jsondata = json.loads(request.body)
+        subtareas = list(subtarea.objects.filter(id=id).values())
+        if len(subtareas)>0:
+            dato = subtarea.objects.get(id=id)
+            dato.titulo = jsondata['titulo']
+            dato.tipo=jsondata['tipo']
+            dato.imagen=jsondata['imagen']
+            dato.hora_inicio=jsondata['hora_inicio']
+            dato.hora_fin=jsondata['hora_fin']
+            dato.comentario=jsondata['comentario']
+            dato.save()
+            datos={'mensaje':'Success'}
+        else:
+            datos={'mensaje':'No existe la subtarea'}
+        return JsonResponse(datos)
+    
+    def delete(self, request, id):
+        subtareas = list(subtarea.objects.filter(id=id).values())
+        if len(subtareas)>0:
+            subtarea.objects.filter(id=id).delete()
+            datos={'mensaje':'Success'}
+        else:
+            datos={'mensaje':'No existe la subtarea'}
         return JsonResponse(datos)
     
 
@@ -235,3 +324,43 @@ class VueloView(View):
             datos={'mensaje':'No hay vuelos'}
         return JsonResponse(datos)
     
+    def post(self, request):
+        jsondata = json.loads(request.body)
+        vuelo.objects.create(ac_reg=jsondata['ac_reg'], ac_type=jsondata['ac_type'], estado=jsondata['estado'], lugar_salida=jsondata['lugar_salida'], lugar_destino=jsondata['lugar_destino'], fecha_llegada=jsondata['fecha_llegada'], hora_llegada=jsondata['hora_llegada'], ente_pagador=jsondata['ente_pagador'], numero_vuelo=jsondata['numero_vuelo'], ETA=jsondata['ETA'], ETD=jsondata['ETD'], ATA=jsondata['ATA'], ATD=jsondata['ATD'], gate=jsondata['gate'], tipo_vuelo=jsondata['tipo_vuelo'])
+        datos={'mensaje':'Success'}
+        return JsonResponse(datos)
+    
+    def put(self, request, id):
+        jsondata = json.loads(request.body)
+        vuelos = list(vuelo.objects.filter(id=id).values())
+        if len(vuelos)>0:
+            dato = vuelo.objects.get(id=id)
+            dato.ac_reg =jsondata['ac_reg']
+            dato.ac_type=jsondata['ac_type']
+            dato.estado=jsondata['estado']
+            dato.lugar_salida=jsondata['lugar_salida']
+            dato.lugar_destino=jsondata['lugar_destino']
+            dato.fecha_llegada= jsondata['fecha_llegada']
+            dato.hora_llegada=jsondata['hora_llegada']
+            dato.ente_pagador=jsondata['ente_pagador']
+            dato.numero_vuelo=jsondata['numero_vuelo']
+            dato.ETA=jsondata['ETA']
+            dato.ETD=jsondata['ETD']
+            dato.ATA=jsondata['ATA']
+            dato.ATD=jsondata['ATD']
+            dato.gate=jsondata['gate']
+            dato.tipo_vuelo=jsondata['tipo_vuelo']
+            dato.save()
+            datos={'mensaje':'Success'}
+        else:
+            datos={'mensaje':'No existe el vuelo'}
+        return JsonResponse(datos)
+    
+    def delete(self, request, id):
+        vuelos = list(vuelo.objects.filter(id=id).values())
+        if len(vuelos)>0:
+            vuelo.objects.filter(id=id).delete()
+            datos={'mensaje':'Success'}
+        else:
+            datos={'mensaje':'No existe el vuelo'}
+        return JsonResponse(datos)

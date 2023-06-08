@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MaquinariaView, CodigoDemoraView, TurnaroundView, UsuarioView, AerolineaView, PlantillaView, VueloView
+from .views import MaquinariaView, CodigoDemoraView, TurnaroundView, UsuarioView, AerolineaView, PlantillaView, VueloView, TareaView, SubtareaView
 
 urlpatterns=[
     path('maquinaria/',MaquinariaView.as_view(), name='maquinarias'),
@@ -18,5 +18,12 @@ urlpatterns=[
     path('plantilla/',PlantillaView.as_view(), name='plantillas'),
     path('plantilla/<int:id>',PlantillaView.as_view(), name='plantilla'),
 
-    path('vuelo/',VueloView.as_view(), name='vuelos')
+    path('tarea/',TareaView.as_view(), name='tareas'),
+    path('tarea/<int:id>',TareaView.as_view(), name='tarea'),
+
+    path('subtarea/',SubtareaView.as_view(), name='subtarea'),
+    path('subtarea/<int:id>',SubtareaView.as_view(), name='subtarea'),
+
+    path('vuelo/',VueloView.as_view(), name='vuelos'),
+    path('vuelo/<int:id>',VueloView.as_view(), name='vuelo')
 ]
