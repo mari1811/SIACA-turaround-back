@@ -5,6 +5,8 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from .models import maquinaria, codigos_demora, turnaround, usuario, aerolinea, plantilla, vuelo, tarea, subtarea
 import json
+from django.contrib.auth.hashers import make_password, check_password
+
 
 # Create your views here.
 
@@ -100,7 +102,7 @@ class UsuarioView(View):
     
     def post(self, request):
         jsondata = json.loads(request.body)
-        usuario.objects.create(cedula=jsondata['cedula'], cargo=jsondata['cargo'], departameto=jsondata['departamento'], correo=jsondata['correo'], telefono=jsondata['telefono'], turno=jsondata['turno'] ,contrasena=jsondata['contrasena'], estado=jsondata['estado'] ,imagen=jsondata['imagen'])
+        usuario.objects.create(cedula=jsondata['cedula'], cargo=jsondata['cargo'], departameto=jsondata['departamento'], correo=jsondata['correo'], telefono=jsondata['telefono'], turno=jsondata['turno'] ,contrasena=make_password(jsondata['contrasena']), estado=jsondata['estado'] ,imagen=jsondata['imagen'])
         datos={'mensaje':'Success'}
         return JsonResponse(datos)
     

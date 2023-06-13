@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import MaquinariaView, CodigoDemoraView, TurnaroundView, UsuarioView, AerolineaView, PlantillaView, VueloView, TareaView, SubtareaView
 
+
 urlpatterns=[
     path('maquinaria/',MaquinariaView.as_view(), name='maquinarias'),
     path('maquinaria/<int:id>',MaquinariaView.as_view(), name='maquina'),
