@@ -7,8 +7,13 @@ from .models import maquinaria, codigos_demora, turnaround, usuario, aerolinea, 
 import json
 from django.contrib.auth.hashers import make_password, check_password
 
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+
 
 # Create your views here.
+
 
 class MaquinariaView(View):
 
