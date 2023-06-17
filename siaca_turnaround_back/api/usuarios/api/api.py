@@ -5,13 +5,15 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from .serializer import UsuarioSerializer, UsuarioListaSerializer
 from api.models import usuario
+from django.contrib.auth.models import User
+
 
 @api_view(['GET','POST'])
 def usuario_api_view(request):
 
     #Lista de uausarios
     if request.method == 'GET':
-        usuarios = usuario.objects.all()
+        usuarios = User.objects.all()
         usuarios_serializer = UsuarioListaSerializer(usuarios, many = True)
         return Response (usuarios_serializer.data, status=status.HTTP_200_OK)
     
