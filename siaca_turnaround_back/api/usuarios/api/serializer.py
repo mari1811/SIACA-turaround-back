@@ -6,11 +6,6 @@ from django.contrib.auth.models import User
 
 
 
-class TokenUsuarioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = usuario
-        fields = ('correo')
-
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -32,3 +27,20 @@ class UsuarioListaSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username','first_name','last_name','email')
+
+
+class DatosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+class DatosListaSerializer(serializers.ModelSerializer):
+    fk_user = UsuarioListaSerializer()
+    class Meta:
+        model = usuario
+        fields = '__all__'
+
+class IDSerialier(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id','username')

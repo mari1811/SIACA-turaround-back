@@ -3,9 +3,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier
 from api.models import usuario
 from django.contrib.auth.models import User
+from rest_framework import filters
+from rest_framework import generics
+
 
 
 @api_view(['GET','POST'])
@@ -30,7 +33,7 @@ def usuario_api_view(request):
 @api_view(['GET','PUT','DELETE'])
 def usuarios_detalles_view(request, pk=None):
     #Consulta de usuario
-    user = usuario.objects.filter(id = pk).first()
+    user = User.objects.filter(id = pk).first()
 
     #Validación 
     if user:
@@ -55,3 +58,30 @@ def usuarios_detalles_view(request, pk=None):
 
     #No existe el usuario   
     return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET','POST'])
+def datos_api_view(request, pk=None):
+
+    #Lista de uausarios
+    if request.method == 'GET':
+        datos = User.objects.filter(id = pk).first()
+        datos_serializer = DatosListaSerializer(datos)
+        return Response (datos_serializer.data, status=status.HTTP_200_OK)
+    
+    #Crear un usuario
+    elif request.method == 'POST':
+        datos_serializer = DatosSerializer(data = request.data)
+        if datos_serializer.is_valid():
+            datos_serializer.save()
+            return Response(datos_serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(datos_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = IDSerialier
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['username']

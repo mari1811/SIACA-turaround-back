@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -29,6 +30,7 @@ class maquinaria_turnaround(models.Model):
     fk_maquinaria=models.ForeignKey(maquinaria,blank=True,null=True,on_delete=models.CASCADE)
 
 class usuario(models.Model):
+    fk_user=models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
     cedula=models.BigIntegerField()
     cargo=models.CharField(max_length=50)
     departameto=models.CharField(max_length=50)
