@@ -34,8 +34,18 @@ class DatosSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+class UpdateUserSeralizer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name','last_name')
+        
 class DatosListaSerializer(serializers.ModelSerializer):
-    fk_user = UsuarioListaSerializer()
+    fk_user = UpdateUserSeralizer()
+    class Meta:
+        model = usuario
+        fields = '__all__'
+
+class UpdateUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = usuario
         fields = '__all__'
@@ -44,3 +54,5 @@ class IDSerialier(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id','username')
+
+
