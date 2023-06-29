@@ -149,3 +149,10 @@ PASSWORD_HASHERS = [
   'django.contrib.auth.hashers.CryptPasswordHasher',
 ]
 
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 25
+EMAIL_HOST_USER = "recuperarclave05@gmail.com"
+EMAIL_HOST_PASSWORD = "siacaservicios123"
