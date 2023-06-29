@@ -33,13 +33,9 @@ class usuario(models.Model):
     fk_user=models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
     cedula=models.BigIntegerField()
     cargo=models.CharField(max_length=50)
-    departameto=models.CharField(max_length=50)
-    correo=models.CharField(max_length=50)
+    departamento=models.CharField(max_length=50)
     telefono=models.CharField(max_length=50)
     turno=models.CharField(max_length=50)
-    contrasena=models.CharField(max_length=100)
-    estado=models.CharField(max_length=50)
-    imagen=models.CharField(max_length=50)
 
 class usuario_turnaround(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)

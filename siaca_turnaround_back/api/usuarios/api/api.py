@@ -69,8 +69,12 @@ def datos_api_view(request, pk=None):
         datos_serializer = DatosListaSerializer(datos)
         return Response (datos_serializer.data, status=status.HTTP_200_OK)
     
+
+@api_view(['POST'])
+def registro_usuario(request):
+
     #Crear un usuario
-    elif request.method == 'POST':
+    if request.method == 'POST':
         datos_serializer = UpdateUsuarioSerializer(data = request.data)
         if datos_serializer.is_valid():
             datos_serializer.save()

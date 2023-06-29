@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import usuario_api_view, usuarios_detalles_view, datos_api_view, UserListView
+from .api import usuario_api_view, usuarios_detalles_view, datos_api_view, UserListView, registro_usuario
 from api.usuarios.views import Login, Logout
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -13,6 +13,7 @@ urlpatterns=[
     path('registro/', usuario_api_view, name='usuario_api_view'),
     path('listado/datos/', datos_api_view, name='datos_api_view'),
     path('registro2usuario/<int:pk>/', datos_api_view, name='datos_api_view'),
+    path('registro2usuario/', registro_usuario, name='registro_usuario'),
 
     path('listado/user/', UserListView.as_view(), name='user_api_view'),
 
