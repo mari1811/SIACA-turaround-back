@@ -8,6 +8,9 @@ from django.contrib.sessions.models import Session
 import datetime
 from api.usuarios.api.serializer import ResetPasswordSerializer, EmailSerializer
 from django.contrib.auth.models import User
+from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 
 
 
@@ -90,6 +93,14 @@ class PasswordReset(generics.GenericAPIView):
                 kwargs={"encoded_pk": encoded_pk, "token": token},
             )
             reset_link = f"localhost:8000{reset_url}"
+
+            msg = EmailMultiAlternatives(
+            'Cambio de contraseña',
+            'Ingrese a este link para cambiar su contraseña:\n{}'.format(reset_link),
+            settings.EMAIL_HOST_USER,
+            [email]
+        )
+            msg.send()
 
             # send the rest_link as mail to the user.
 
