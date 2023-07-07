@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from api.models import usuario
 from django.contrib.auth import authenticate
-from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import User
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator

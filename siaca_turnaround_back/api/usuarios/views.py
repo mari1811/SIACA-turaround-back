@@ -93,10 +93,11 @@ class PasswordReset(generics.GenericAPIView):
                 kwargs={"encoded_pk": encoded_pk, "token": token},
             )
             reset_link = f"localhost:8000{reset_url}"
+            email_link = f"http://localhost:3000/RecoverPassword/{encoded_pk}/{token}"
 
             msg = EmailMultiAlternatives(
             'Cambio de contraseña',
-            'Ingrese a este link para cambiar su contraseña:\n{}'.format(reset_link),
+            'Ingrese a este link para cambiar su contraseña:\n{}'.format(email_link),
             settings.EMAIL_HOST_USER,
             [email]
         )
@@ -107,7 +108,7 @@ class PasswordReset(generics.GenericAPIView):
             return response.Response(
                 {
                     "message": 
-                    f"Your password rest link: {reset_link}"
+                    f"Link enviado al correo"
                 },
                 status=status.HTTP_200_OK,
             )

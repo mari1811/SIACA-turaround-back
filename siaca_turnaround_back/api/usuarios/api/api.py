@@ -54,7 +54,7 @@ def usuarios_detalles_view(request, pk=None):
         #Eliminar un usuario
         elif request.method == 'DELETE':
             user.delete()
-            return Response({'mensaje':'Usuario eliminado'}, status=status.HTTTP_200_OK)
+            return Response({'mensaje':'Usuario eliminado'}, status=status.HTTP_200_OK)
 
     #No existe el usuario   
     return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
