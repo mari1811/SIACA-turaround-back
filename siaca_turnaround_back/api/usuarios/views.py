@@ -31,7 +31,7 @@ class Login(ObtainAuthToken):
             if created:
                 return Response({
                     'token': token.key,
-                    'mensaje': 'Inicio de sesión exitoso'
+                    'value': True
                 })
             else: 
                 token.delete()
@@ -40,8 +40,12 @@ class Login(ObtainAuthToken):
                     'token': token.key,
                     'value': True
                 })
-                
-        return Response({'mensaje':'Hola desde response'}, status = status.HTTP_200_OK)
+            
+        else:
+            return Response({
+                'mensaje':"usuario o clave no válidas", 
+                'value': False}, 
+                status = status.HTTP_400_BAD_REQUEST)
 
 class Logout(APIView):
 
