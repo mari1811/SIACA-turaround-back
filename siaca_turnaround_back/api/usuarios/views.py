@@ -38,7 +38,7 @@ class Login(ObtainAuthToken):
                 token = Token.objects.create(user = user)
                 return Response({
                     'token': token.key,
-                    'mensaje': 'Inicio de sesión exitoso'
+                    'value': True
                 })
                 
         return Response({'mensaje':'Hola desde response'}, status = status.HTTP_200_OK)
