@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import plantilla_api_view, tarea_api_view, subtarea_api_view
+from .api import Plantilla, Tarea, Subtarea, VistaPlantilla, VistaSubtarea
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -7,8 +7,11 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns=[
 
-    path('', plantilla_api_view, name='plantilla_api_view'),
-    path('tarea/', tarea_api_view, name='tarea_api_view'),
-    path('subtarea/', subtarea_api_view, name='subtarea_api_view')
+    path('', Plantilla.as_view(), name='lista_plantillas'),
+    path('tarea/', Tarea.as_view(), name='lista_tareas'),
+    path('subtarea/', Subtarea.as_view(), name='lista_subtareas'),
+    path('vista/<int:pk>/', VistaPlantilla.as_view(), name='vista'),
+    path('subtarea/<int:pk>/', VistaSubtarea.as_view(), name='subtarea')
+
 ]
 

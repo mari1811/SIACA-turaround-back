@@ -3,53 +3,97 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer
+from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, VistaPlantillaSerializer, TareaVistaSerializer, SubareaVistaSerializer
 from api.models import plantilla, tarea, subtarea
 from rest_framework import filters
 from rest_framework import generics
+from rest_framework.authtoken.models import Token
 
 
-
-@api_view(['GET','POST'])
-def plantilla_api_view(request):
+class Plantilla(APIView):
 
     #Lista de plantillas
-    if request.method == 'GET':
-        plantilla = plantilla.objects.all()
-        plantilla_serializer = PlantillaSerializer(plantilla, many = True)
-        return Response (plantilla_serializer.data, status=status.HTTP_200_OK)
-    
-    #Crear una plantilla
-    elif request.method == 'POST':
-        plantilla_serializer = PlantillaSerializer(data = request.data)
-        if plantilla_serializer.is_valid():
-            plantilla_serializer.save()
-            return Response(plantilla_serializer.data, status=status.HTTP_201_CREATED)
+    def get(self, request, *args, **kwargs):
         
-        return Response(plantilla_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                plantillas = plantilla.objects.all()
+                plantillas_serializer = PlantillaSerializer(plantillas, many = True)
+                return Response (plantillas_serializer.data, status=status.HTTP_200_OK)
+
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+   
+    #Crear una Plantilla      
+    def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                plantilla_serializer = PlantillaSerializer(data = request.data)
+                if plantilla_serializer.is_valid():
+                    plantilla_serializer.save()
+                    return Response(plantilla_serializer.data, status=status.HTTP_201_CREATED)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
 
-@api_view(['POST'])
-def tarea_api_view(request):
+class Tarea(APIView):
 
     #Crear una tarea
-    if request.method == 'POST':
-        tarea_serializer = TareaSerializer(data = request.data)
-        if tarea_serializer.is_valid():
-            tarea_serializer.save()
-            return Response(tarea_serializer.data, status=status.HTTP_201_CREATED)
+    def post(self, request, *args, **kwargs):
         
-        return Response(tarea_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                tarea_serializer = TareaSerializer(data = request.data)
+                if tarea_serializer.is_valid():
+                    tarea_serializer.save()
+                    return Response(tarea_serializer.data, status=status.HTTP_201_CREATED)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
 
-@api_view(['POST'])
-def subtarea_api_view(request):
+class Subtarea(APIView):
 
     #Crear una subtarea
-    if request.method == 'POST':
-        subtarea_serializer = SubtareaSerializer(data = request.data)
-        if subtarea_serializer.is_valid():
-            subtarea_serializer.save()
-            return Response(subtarea_serializer.data, status=status.HTTP_201_CREATED)
+    def post(self, request, *args, **kwargs):
         
-        return Response(subtarea_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                subtarea_serializer = SubtareaSerializer(data = request.data)
+                if subtarea_serializer.is_valid():
+                    subtarea_serializer.save()
+                    return Response(subtarea_serializer.data, status=status.HTTP_201_CREATED)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class VistaPlantilla(APIView):
+    
+    #Buscar una plantilla con sus detalles 
+    def get(self, request, pk=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            detalles = tarea.objects.filter(fk_plantilla_id = pk)
+            if detalles:
+                plantilla_serializer = TareaVistaSerializer(detalles, many = True)
+                return Response(plantilla_serializer.data, status=status.HTTP_200_OK)
+            return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class VistaSubtarea(APIView):
+     
+     def get(self, request, pk=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            detalles = subtarea.objects.filter(fk_tarea_id = pk)
+            if detalles:
+                plantilla_serializer =SubareaVistaSerializer(detalles, many = True)
+                return Response(plantilla_serializer.data, status=status.HTTP_200_OK)
+            return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
