@@ -51,7 +51,7 @@ class ModificarVuelo(APIView):
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
     #Editar un vuelo
-    def patch(self, request, pk=None, *args, **kwargs):
+    def put(self, request, pk=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
@@ -85,6 +85,28 @@ def lista_api_vuelo(request):
         vuelos = vuelo.objects.all()
         vuelos_serializer = ListaVuelosSerializer(vuelos, many = True)
         return Response (vuelos_serializer.data, status=status.HTTP_200_OK)
+    
+
+
+class BuscarVueloFecha(APIView):
+        
+        def get(self, request, fecha=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                fly = vuelo.objects.filter(fecha_llegada = fecha)
+                if fly:
+                    vuelo_serializer = ListaVuelosSerializer(fly, many = True)
+                    return Response(vuelo_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No hay vuelos en esa fecha'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+    
+
+
+
 
 
 

@@ -5,7 +5,11 @@ ejecutar el comando ".\activate" o "./env/Scripts/activate"
 PARA INSTALAR DEPENDENCIAS EN EL PROYECTO
 (con el ambiente activado)
 cd a la carpeta donde se encuentre el archivo "manage.py"
-ejecutar el comando "pip install django mysqlclient pymysql" 
+ejecutar el comando 
+"pip install django mysqlclient pymysql" 
+"pip install rest_framework djangorestframework_simplejwt"
+"python -m pip install Pillow"
+
 estas dependecias son las necesarias para el proyecto
 
 PARA CREAR SUPERUSER DE LA BD

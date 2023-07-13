@@ -69,8 +69,8 @@ class turnaround(models.Model):
     identificador=models.PositiveIntegerField()
     fk_vuelo=models.ForeignKey(vuelo,blank=True,null=True,on_delete=models.CASCADE)
     fk_codigos_demora=models.ForeignKey(codigos_demora,blank=True,null=True,on_delete=models.CASCADE)
-    fecha_inicio=models.DateTimeField()
-    fecha_fin=models.DateTimeField()
+    fecha_inicio=models.DateField()
+    fecha_fin=models.DateField()
 
 class maquinaria_turnaround(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
