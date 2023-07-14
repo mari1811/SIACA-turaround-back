@@ -11,12 +11,15 @@ class usuario(models.Model):
     telefono=models.CharField(max_length=50)
     turno=models.CharField(max_length=50)
 
+class categoria(models.Model):
+    nombre=models.CharField(max_length=100)
+
 class maquinaria(models.Model):
     identificador=models.CharField(max_length=50)
     modelo=models.CharField(max_length=50)
     combustible=models.CharField(max_length=50)
     estado=models.CharField(max_length=50)
-    categoria=models.CharField(max_length=50)
+    fk_categoria=models.ForeignKey(categoria,blank=True,null=True,on_delete=models.CASCADE)
     imagen=models.CharField(max_length=50)
 
 class codigos_demora(models.Model):
@@ -41,10 +44,22 @@ class tarea(models.Model):
     fk_plantilla=models.ForeignKey(plantilla,blank=True,null=True,on_delete=models.CASCADE)
     titulo=models.CharField(max_length=50)
 
+class tipo(models.Model):
+    nombre=models.CharField(max_length=50)
+
 class subtarea(models.Model):
     fk_tarea=models.ForeignKey(tarea,blank=True,null=True,on_delete=models.CASCADE)
     titulo=models.CharField(max_length=50)
-    tipo=models.CharField(max_length=50)
+    fk_tipo=models.ForeignKey(tipo,blank=True,null=True,on_delete=models.CASCADE)
+
+class tipo_subtarea(models.Model):
+    fk_tipo=models.ForeignKey(tipo,blank=True,null=True,on_delete=models.CASCADE)
+    fk_subtarea=models.ForeignKey(subtarea,blank=True,null=True,on_delete=models.CASCADE)
+
+class cantidad_categoria(models.Model):
+    cantidad=models.IntegerField()
+    fk_categoria=models.ForeignKey(categoria,blank=True,null=True,on_delete=models.CASCADE)
+    fk_plantilla=models.ForeignKey(plantilla,blank=True,null=True,on_delete=models.CASCADE)
 
 class vuelo(models.Model):
     fk_aerolinea=models.ForeignKey(aerolinea,blank=True,null=True,on_delete=models.CASCADE)
@@ -78,7 +93,7 @@ class maquinaria_turnaround(models.Model):
 
 class usuario_turnaround(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
-    fk_usuario=models.ForeignKey(usuario,blank=True,null=True,on_delete=models.CASCADE)
+    fk_user=models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
 
 class Imagen(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)

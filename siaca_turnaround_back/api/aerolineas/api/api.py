@@ -49,7 +49,7 @@ class ModificarAerolinea(APIView):
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
 
-    def patch(self, request, pk=None, *args, **kwargs):
+    def put(self, request, pk=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:

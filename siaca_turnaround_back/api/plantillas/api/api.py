@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, VistaPlantillaSerializer, TareaVistaSerializer, SubareaVistaSerializer
-from api.models import plantilla, tarea, subtarea
+from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, TareaVistaSerializer, SubareaVistaSerializer, CantidadSerializer, CategoriaSerializer, PlantillaMaquinariaSerializer
+from api.models import plantilla, tarea, subtarea, cantidad_categoria, categoria
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
@@ -69,6 +69,49 @@ class Subtarea(APIView):
                 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
+class Maquinaria(APIView):
+    
+    def post(self, request, *args, **kwargs):
+        
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            maquinaria_serializer = CantidadSerializer(data = request.data)
+            if maquinaria_serializer.is_valid():
+                maquinaria_serializer.save()
+                return Response(maquinaria_serializer.data, status=status.HTTP_201_CREATED)
+                
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class Categoria(APIView):
+
+
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                maquinarias = categoria.objects.all()
+                maquinaria_serializer = CategoriaSerializer(maquinarias, many = True)
+                return Response (maquinaria_serializer.data, status=status.HTTP_200_OK)
+
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                categoria_serializer = CategoriaSerializer(data = request.data)
+                if categoria_serializer.is_valid():
+                    categoria_serializer.save()
+                    return Response(categoria_serializer.data, status=status.HTTP_201_CREATED)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class VistaPlantilla(APIView):
     
@@ -97,3 +140,18 @@ class VistaSubtarea(APIView):
                 return Response(plantilla_serializer.data, status=status.HTTP_200_OK)
             return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+     
+
+class VistaMaquinaria(APIView):
+     
+    def get(self, request, pk=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            detalles = cantidad_categoria.objects.filter(fk_plantilla_id = pk)
+            if detalles:
+                plantilla_serializer = PlantillaMaquinariaSerializer(detalles, many = True)
+                return Response(plantilla_serializer.data, status=status.HTTP_200_OK)
+            return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+

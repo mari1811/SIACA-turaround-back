@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import plantilla, tarea, subtarea
+from api.models import plantilla, tarea, subtarea, categoria, cantidad_categoria
 from django.contrib.auth import authenticate
 
 
@@ -35,5 +35,20 @@ class SubareaVistaSerializer(serializers.ModelSerializer):
         model = subtarea
         fields = ('fk_tarea','titulo','tipo')
 
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = categoria
+        fields = '__all__'
 
+class CantidadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = cantidad_categoria
+        fields = '__all__'
+
+class PlantillaMaquinariaSerializer(serializers.ModelSerializer):
+    fk_plantilla = PlantillaSerializer()
+    fk_categoria = CategoriaSerializer()
+    class Meta:
+        model = cantidad_categoria
+        fields = ('cantidad','fk_categoria','fk_plantilla')
 
