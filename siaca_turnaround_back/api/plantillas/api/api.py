@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, TareaVistaSerializer, SubareaVistaSerializer, CantidadSerializer, CategoriaSerializer, PlantillaMaquinariaSerializer
-from api.models import plantilla, tarea, subtarea, cantidad_categoria, categoria
+from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, TareaVistaSerializer, SubareaVistaSerializer, CantidadSerializer, CategoriaSerializer, PlantillaMaquinariaSerializer, TipoSerializer
+from api.models import plantilla, tarea, subtarea, cantidad_categoria, categoria, tipo
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
@@ -109,6 +109,20 @@ class Categoria(APIView):
                     categoria_serializer.save()
                     return Response(categoria_serializer.data, status=status.HTTP_201_CREATED)
                 
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class Tipo(APIView):
+
+
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                tipos = tipo.objects.all()
+                tipo_serializer = TipoSerializer(tipos, many = True)
+                return Response (tipo_serializer.data, status=status.HTTP_200_OK)
+
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
 
 
