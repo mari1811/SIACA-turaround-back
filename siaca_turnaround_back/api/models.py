@@ -25,7 +25,7 @@ class maquinaria(models.Model):
 class codigos_demora(models.Model):
     identificador=models.PositiveIntegerField()
     alpha=models.CharField(max_length=50)
-    descripcion=models.CharField(max_length=50)
+    descripcion=models.CharField(max_length=500)
     categoria=models.CharField(max_length=50)
     departamento=models.CharField(max_length=50)
     accountable=models.CharField(max_length=50)

@@ -112,7 +112,6 @@ class Categoria(APIView):
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class VistaPlantilla(APIView):
     
     #Buscar una plantilla con sus detalles 
@@ -127,6 +126,19 @@ class VistaPlantilla(APIView):
             return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
+    #Buscar una plantilla con sus detalles 
+    def delete(self, request, pk=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            detalles = plantilla.objects.filter(id = pk)
+            tareas = tarea.objects.filter(fk_plantilla = pk)
+            if detalles:
+                detalles.delete()
+                tareas.delete()
+                return Response({'mensaje':'Plantilla eliminada'}, status=status.HTTP_200_OK)
+            return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
 
 class VistaSubtarea(APIView):
      

@@ -16,7 +16,7 @@ class TareaSerializer(serializers.ModelSerializer):
 class SubtareaSerializer(serializers.ModelSerializer):
     class Meta:
         model = subtarea
-        fields = ('titulo','tipo','fk_tarea')
+        fields = '__all__'
 
 class VistaPlantillaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,13 +27,13 @@ class TareaVistaSerializer(serializers.ModelSerializer):
     fk_plantilla = VistaPlantillaSerializer()
     class Meta:
         model = tarea
-        fields = ('fk_plantilla','titulo',)
+        fields = '__all__'
 
 class SubareaVistaSerializer(serializers.ModelSerializer):
     fk_tarea = TareaVistaSerializer()
     class Meta:
         model = subtarea
-        fields = ('fk_tarea','titulo','tipo')
+        fields = '__all__'
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
