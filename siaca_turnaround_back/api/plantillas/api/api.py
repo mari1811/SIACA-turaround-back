@@ -181,3 +181,15 @@ class VistaMaquinaria(APIView):
             return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ContadorMaquinaria(APIView):
+     
+     def get (self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+             maquinarias = categoria.objects.all().count()
+             return Response ({"contador": maquinarias}, status=status.HTTP_200_OK)
+
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
