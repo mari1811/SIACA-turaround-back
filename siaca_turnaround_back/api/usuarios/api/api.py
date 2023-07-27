@@ -8,6 +8,7 @@ from api.models import usuario
 from django.contrib.auth.models import User
 from rest_framework import filters
 from rest_framework import generics
+from rest_framework.authtoken.models import Token
 
 
 
@@ -68,7 +69,18 @@ def datos_api_view(request, pk=None):
         datos = usuario.objects.filter(id = pk).first()
         datos_serializer = DatosListaSerializer(datos)
         return Response (datos_serializer.data, status=status.HTTP_200_OK)
-    
+
+class Lista(APIView):
+
+    def get(self, request, *args, **kwargs):
+    #Lista de usuarios
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            if request.method == 'GET':
+                datos = usuario.objects.all()
+                datos_serializer = DatosListaSerializer(datos, many = True)
+                return Response (datos_serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def registro_usuario(request):
