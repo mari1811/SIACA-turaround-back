@@ -28,7 +28,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 class UsuarioListaSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username','first_name','last_name','email')
+        fields = ('username','first_name','last_name')
 
 
 class DatosSerializer(serializers.ModelSerializer):
@@ -39,7 +39,7 @@ class DatosSerializer(serializers.ModelSerializer):
 class UpdateUserSeralizer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('first_name','last_name')
         
 class DatosListaSerializer(serializers.ModelSerializer):
     fk_user = UpdateUserSeralizer()

@@ -45,7 +45,7 @@ def usuarios_detalles_view(request, pk=None):
             return Response(usuario_serializer.data, status=status.HTTP_200_OK)
         
         #Actualizar datos de un usuario
-        elif request.method == 'PUT':
+        elif request.method == 'PATCH':
             usuario_serializer = UpdateUserSeralizer(user, data=request.data)
             if usuario_serializer.is_valid():
                 usuario_serializer.save()
@@ -59,6 +59,17 @@ def usuarios_detalles_view(request, pk=None):
 
     #No existe el usuario   
     return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
+
+class Update(APIView):
+
+    def patch(self, request, pk =None, *args, **kwargs):
+
+        user = User.objects.filter(id = pk).first()
+        usuario_serializer = UpdateUserSeralizer(user, data=request.data)
+        if usuario_serializer.is_valid():
+            usuario_serializer.save()
+            return Response(usuario_serializer.data, status=status.HTTP_200_OK)
+        return Response(usuario_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET','POST', 'PUT'])
@@ -100,3 +111,13 @@ class UserListView(generics.ListAPIView):
     serializer_class = IDSerialier
     filter_backends = [filters.SearchFilter]
     search_fields = ['username']
+
+
+class Prueba(APIView):
+
+    def get(self, request, *args, **kwargs):
+        
+            if request.method == 'GET':
+                datos = User.objects.all()
+                datos_serializer = UsuarioListaSerializer(datos, many = True)
+                return Response (datos_serializer.data, status=status.HTTP_200_OK)
