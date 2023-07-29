@@ -39,7 +39,7 @@ class DatosSerializer(serializers.ModelSerializer):
 class UpdateUserSeralizer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name','last_name')
+        fields = '__all__'
         
 class DatosListaSerializer(serializers.ModelSerializer):
     fk_user = UpdateUserSeralizer()

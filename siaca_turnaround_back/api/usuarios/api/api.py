@@ -45,7 +45,7 @@ def usuarios_detalles_view(request, pk=None):
             return Response(usuario_serializer.data, status=status.HTTP_200_OK)
         
         #Actualizar datos de un usuario
-        elif request.method == 'PATCH':
+        elif request.method == 'PUT':
             usuario_serializer = UpdateUserSeralizer(user, data=request.data)
             if usuario_serializer.is_valid():
                 usuario_serializer.save()
