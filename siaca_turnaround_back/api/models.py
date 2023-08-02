@@ -34,6 +34,10 @@ class aerolinea(models.Model):
     nombre=models.CharField(max_length=50)
     correo=models.CharField(max_length=50)
     telefono=models.CharField(max_length=50)
+    telefono_secundario=models.CharField(max_length=50, null=True)
+    correo_secundario=models.CharField(max_length=50, null=True)
+    pais=models.CharField(max_length=50, null=True)
+    ciudad=models.CharField(max_length=50, null=True)
     codigo=models.CharField(max_length=50)
     imagen=models.ImageField(upload_to="images/", null=True, blank=True)
 
