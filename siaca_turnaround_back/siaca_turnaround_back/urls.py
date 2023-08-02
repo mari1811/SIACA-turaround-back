@@ -26,5 +26,6 @@ urlpatterns = [
     path('aerolineas/', include('api.aerolineas.api.urls')),
     path('turnarounds/', include('api.turnarounds.api.urls')),
     path('maquinarias/', include('api.maquinarias.api.urls')),
+    path('documentos/', include('api.documentos.api.urls')),
     
 ]
