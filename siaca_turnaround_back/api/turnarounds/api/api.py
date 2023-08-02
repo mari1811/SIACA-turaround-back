@@ -27,6 +27,19 @@ class Codigos(APIView):
 
 class Turnaround(APIView):
 
+
+    #Lista de Turnarounds
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                turnarounds = turnaround.objects.all()
+                turnaround_serializer = TurnaroundDetallesSerializer(turnarounds, many = True)
+                return Response (turnaround_serializer.data, status=status.HTTP_200_OK)
+
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
     #Crear un Turnaround      
     def post(self, request, *args, **kwargs):
         
