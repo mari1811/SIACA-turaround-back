@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer
 from api.models import usuario
 from django.contrib.auth.models import User
 from rest_framework import filters
@@ -65,7 +65,7 @@ class Update(APIView):
     def patch(self, request, pk =None, *args, **kwargs):
 
         user = User.objects.filter(id = pk).first()
-        usuario_serializer = UpdateUserSeralizer(user, data=request.data)
+        usuario_serializer = UpdateSeralizer(user, data=request.data)
         if usuario_serializer.is_valid():
             usuario_serializer.save()
             return Response(usuario_serializer.data, status=status.HTTP_200_OK)
