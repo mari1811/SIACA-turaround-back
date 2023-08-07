@@ -18,7 +18,7 @@ class maquinaria(models.Model):
     identificador=models.CharField(max_length=50)
     modelo=models.CharField(max_length=50)
     combustible=models.CharField(max_length=50)
-    estado=models.CharField(max_length=50)
+    estado=models.BooleanField(null=True)
     fk_categoria=models.ForeignKey(categoria,blank=True,null=True,on_delete=models.CASCADE)
     imagen=models.CharField(max_length=50)
 

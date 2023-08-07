@@ -36,3 +36,7 @@ class MaquinariaTuraroundSerializer(serializers.ModelSerializer):
         model = maquinaria_turnaround
         fields = '__all__'
 
+class MaquinariaEstadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = maquinaria
+        fields = ('estado',)

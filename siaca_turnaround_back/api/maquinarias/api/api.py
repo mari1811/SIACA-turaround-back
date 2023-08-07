@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import MaquinariaSerializer, MaquinariaModificarSerializer, MaquinariaTuraroundSerializer, MaquinariaDatosSerializer, MaquinariaTuraroundDatosSerializer
+from .serializer import MaquinariaSerializer, MaquinariaModificarSerializer, MaquinariaTuraroundSerializer, MaquinariaDatosSerializer, MaquinariaTuraroundDatosSerializer, MaquinariaEstadoSerializer
 from api.models import maquinaria, maquinaria_turnaround
 from rest_framework import filters
 from rest_framework import generics
@@ -107,6 +107,28 @@ class MaquinariaTurnaround(APIView):
                     return Response(maquinaria_serializer.data, status=status.HTTP_201_CREATED)
                 return Response({'mensaje':'Datos no válidos'}, status=status.HTTP_201_CREATED)
                 
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class EstadoMaquinaria(APIView):
+     
+     #Modificar estado de maquinaria
+        def patch(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                machine = maquinaria.objects.filter(id = pk).first()
+                if machine.estado == True:
+                    maquinaria_serializer = MaquinariaEstadoSerializer(machine, data={"estado": False})
+                    if maquinaria_serializer.is_valid():
+                        maquinaria_serializer.save()
+                        return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
+                    
+                else:
+                        maquinaria_serializer = MaquinariaEstadoSerializer(machine, data={"estado": True})
+                        if maquinaria_serializer.is_valid():
+                            maquinaria_serializer.save()
+                        return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No se ha encontrado la maquinaria'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
         
      
