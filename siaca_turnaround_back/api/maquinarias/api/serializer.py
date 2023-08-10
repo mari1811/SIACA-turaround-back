@@ -14,6 +14,11 @@ class CategoriaSerializer(serializers.ModelSerializer):
         model = categoria
         fields = ('nombre',)
 
+class ListaCategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = categoria
+        fields = '__all__'
+
 class MaquinariaSerializer(serializers.ModelSerializer):
     fk_categoria = CategoriaSerializer()
     class Meta:
