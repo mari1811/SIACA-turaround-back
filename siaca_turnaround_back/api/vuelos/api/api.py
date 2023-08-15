@@ -77,14 +77,19 @@ class ModificarVuelo(APIView):
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
     
-@api_view(['GET'])
-def lista_api_vuelo(request):
+class VueloDetalle(APIView):
 
-    #Lista de vuelos vista principal
-    if request.method == 'GET':
-        vuelos = vuelo.objects.all()
-        vuelos_serializer = ListaVuelosSerializer(vuelos, many = True)
-        return Response (vuelos_serializer.data, status=status.HTTP_200_OK)
+    #Lista de Vuelos
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                vuelos = vuelo.objects.all()
+                vuelos_serializer = ListaVuelosSerializer(vuelos, many = True)
+                return Response (vuelos_serializer.data, status=status.HTTP_200_OK)
+
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
 
 

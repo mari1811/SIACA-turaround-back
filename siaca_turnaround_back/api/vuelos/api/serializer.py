@@ -25,7 +25,7 @@ class ListaVuelosSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = vuelo
-        fields = ('fk_aerolinea','fk_plantilla','ac_reg','lugar_salida','lugar_destino','fecha_llegada','hora_llegada','numero_vuelo','gate')
+        fields = '__all__'
 
 
 
