@@ -65,24 +65,40 @@ class cantidad_categoria(models.Model):
     fk_categoria=models.ForeignKey(categoria,blank=True,null=True,on_delete=models.CASCADE)
     fk_plantilla=models.ForeignKey(plantilla,blank=True,null=True,on_delete=models.CASCADE)
 
+class ciudades(models.Model):
+    nombre=models.CharField(max_length=50)
+    codigo=models.CharField(max_length=50)
+
+class ciudades_salida(models.Model):
+    nombre=models.CharField(max_length=50)
+    codigo=models.CharField(max_length=50)
+
+class ciudades_destino(models.Model):
+    nombre=models.CharField(max_length=50)
+    codigo=models.CharField(max_length=50)
+
+class tipo_vuelo(models.Model):
+    nombre=models.CharField(max_length=50)
+
 class vuelo(models.Model):
     fk_aerolinea=models.ForeignKey(aerolinea,blank=True,null=True,on_delete=models.CASCADE)
     fk_plantilla=models.ForeignKey(plantilla,blank=True,null=True,on_delete=models.CASCADE)
+    stn=models.ForeignKey(ciudades,blank=True,null=True,on_delete=models.CASCADE)
     ac_reg=models.CharField(max_length=50)
     ac_type=models.CharField(max_length=50)
     estado=models.CharField(max_length=50)
-    lugar_salida=models.CharField(max_length=50)
-    lugar_destino=models.CharField(max_length=50)
+    lugar_salida=models.ForeignKey(ciudades_salida,blank=True,null=True,on_delete=models.CASCADE)
+    lugar_destino=models.ForeignKey(ciudades_destino,blank=True,null=True,on_delete=models.CASCADE)
     fecha_llegada=models.DateField()
     hora_llegada=models.DateTimeField()
     ente_pagador=models.CharField(max_length=50)
     numero_vuelo=models.BigIntegerField()
-    ETA=models.CharField(max_length=50)
-    ETD=models.CharField(max_length=50)
-    ATA=models.CharField(max_length=50)
-    ATD=models.CharField(max_length=50)
+    ETA=models.DateTimeField()
+    ETD=models.DateTimeField()
+    ATA=models.DateField()
+    ATD=models.DateField()
     gate=models.CharField(max_length=50)
-    tipo_vuelo=models.CharField(max_length=50)
+    tipo_vuelo=models.ForeignKey(tipo_vuelo,blank=True,null=True,on_delete=models.CASCADE)
 
 class turnaround(models.Model):
     identificador=models.PositiveIntegerField()

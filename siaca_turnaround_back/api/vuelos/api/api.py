@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import VueloSerializer, ListaVuelosSerializer
-from api.models import vuelo
+from .serializer import VueloSerializer, ListaVuelosSerializer, CiudadesSerializer, CiudadesSalidaSerializer, CiudadesDestinoSerializer, TipoVueloSerializer
+from api.models import vuelo, ciudades, ciudades_salida, ciudades_destino, tipo_vuelo
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
@@ -106,9 +106,53 @@ class BuscarVueloFecha(APIView):
                 return Response({'mensaje':'No hay vuelos en esa fecha'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
         
+class Ciudades(APIView):
 
+    #Lista de Ciudades
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                ciudad = ciudades.objects.all()
+                ciudades_serializer = CiudadesSerializer(ciudad, many = True)
+                return Response (ciudades_serializer.data, status=status.HTTP_200_OK)
+            
+class CiudadesSalida(APIView):
 
-    
+    #Lista de Ciudades
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                ciudades = ciudades_salida.objects.all()
+                ciudades_serializer = CiudadesSalidaSerializer(ciudades, many = True)
+                return Response (ciudades_serializer.data, status=status.HTTP_200_OK)
+            
+class CiudadesDestino(APIView):
+
+    #Lista de Ciudades
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                ciudades = ciudades_destino.objects.all()
+                ciudades_serializer = CiudadesDestinoSerializer(ciudades, many = True)
+                return Response (ciudades_serializer.data, status=status.HTTP_200_OK)
+
+class TipoVuelo(APIView):
+
+    #Lista tipo de vuelo
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                tipo = tipo_vuelo.objects.all()
+                tipo_serializer = TipoVueloSerializer(tipo, many = True)
+                return Response (tipo_serializer.data, status=status.HTTP_200_OK)
 
 
 
