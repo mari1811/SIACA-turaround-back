@@ -99,7 +99,7 @@ class BuscarVueloFecha(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                fly = vuelo.objects.filter(fecha_llegada = fecha)
+                fly = vuelo.objects.filter(ETA_fecha = fecha)
                 if fly:
                     vuelo_serializer = ListaVuelosSerializer(fly, many = True)
                     return Response(vuelo_serializer.data, status=status.HTTP_200_OK)
