@@ -93,8 +93,8 @@ class vuelo(models.Model):
     numero_vuelo=models.BigIntegerField()
     ETA=models.TimeField()
     ETD=models.TimeField()
-    ATA=models.DateField()
-    ATD=models.DateField()
+    ETA_fecha=models.DateField()
+    ETD_fecha=models.DateField()
     gate=models.CharField(max_length=50)
     tipo_vuelo=models.ForeignKey(tipo_vuelo,blank=True,null=True,on_delete=models.CASCADE)
 
