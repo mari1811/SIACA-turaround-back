@@ -89,8 +89,6 @@ class vuelo(models.Model):
     estado=models.CharField(max_length=50)
     lugar_salida=models.ForeignKey(ciudades_salida,blank=True,null=True,on_delete=models.CASCADE)
     lugar_destino=models.ForeignKey(ciudades_destino,blank=True,null=True,on_delete=models.CASCADE)
-    fecha_llegada=models.DateField()
-    hora_llegada=models.DateTimeField()
     ente_pagador=models.CharField(max_length=50)
     numero_vuelo=models.BigIntegerField()
     ETA=models.TimeField()
