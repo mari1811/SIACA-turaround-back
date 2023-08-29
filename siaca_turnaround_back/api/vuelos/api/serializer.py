@@ -18,14 +18,6 @@ class PlantillaSerializer(serializers.ModelSerializer):
     class Meta:
         model = plantilla
         fields = ('titulo',)
-        
-class ListaVuelosSerializer(serializers.ModelSerializer):
-    fk_aerolinea = AerolineaSerializer()
-    fk_plantilla = PlantillaSerializer()
-
-    class Meta:
-        model = vuelo
-        fields = '__all__'
 
 class CiudadesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,6 +37,18 @@ class CiudadesSalidaSerializer(serializers.ModelSerializer):
 class TipoVueloSerializer(serializers.ModelSerializer):
     class Meta:
         model = tipo_vuelo
+        fields = '__all__'
+
+class ListaVuelosSerializer(serializers.ModelSerializer):
+    fk_aerolinea = AerolineaSerializer()
+    fk_plantilla = PlantillaSerializer()
+    stn = CiudadesSerializer()
+    lugar_salida = CiudadesSalidaSerializer()
+    lugar_destino = CiudadesDestinoSerializer()
+    tipo_vuelo = TipoVueloSerializer()
+
+    class Meta:
+        model = vuelo
         fields = '__all__'
 
 
