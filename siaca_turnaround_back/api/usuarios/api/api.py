@@ -121,3 +121,16 @@ class Prueba(APIView):
                 datos = User.objects.all()
                 datos_serializer = UsuarioListaSerializer(datos, many = True)
                 return Response (datos_serializer.data, status=status.HTTP_200_OK)
+            
+class DeleteUser(APIView):
+
+    def delete(self, request, pk =None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            user = User.objects.filter(id = pk).first()
+            if user:
+                user.delete()
+                return Response({'mensaje':'Usuario eliminada'}, status=status.HTTP_200_OK)
+            return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
