@@ -99,7 +99,7 @@ class vuelo(models.Model):
     tipo_vuelo=models.ForeignKey(tipo_vuelo,blank=True,null=True,on_delete=models.CASCADE)
 
 class turnaround(models.Model):
-    identificador=models.PositiveIntegerField()
+    identificador=models.PositiveIntegerField(blank=True,null=True)
     fk_vuelo=models.ForeignKey(vuelo,blank=True,null=True,on_delete=models.CASCADE)
     fk_codigos_demora=models.ForeignKey(codigos_demora,blank=True,null=True,on_delete=models.CASCADE)
     hora_inicio=models.TimeField(blank=True,null=True)
