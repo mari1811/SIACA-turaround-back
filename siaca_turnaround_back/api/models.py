@@ -104,8 +104,8 @@ class turnaround(models.Model):
     fk_codigos_demora=models.ForeignKey(codigos_demora,blank=True,null=True,on_delete=models.CASCADE)
     hora_inicio=models.TimeField(blank=True,null=True)
     hora_fin=models.TimeField(blank=True,null=True)
-    fecha_inicio=models.DateField()
-    fecha_fin=models.DateField()
+    fecha_inicio=models.DateField(blank=True,null=True)
+    fecha_fin=models.DateField(blank=True,null=True)
 
 class maquinaria_turnaround(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
