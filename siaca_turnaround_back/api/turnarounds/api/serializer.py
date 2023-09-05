@@ -32,7 +32,19 @@ class CodigosDemoraSerializer(serializers.ModelSerializer):
 class VueloSerializer(serializers.ModelSerializer):
     class Meta:
         model = vuelo
-        fields = ('numero_vuelo',)    
+        fields = ('numero_vuelo',)   
+
+class VueloDetalleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = vuelo
+        fields = '__all__' 
+
+class TurnaroundFechaSerializer(serializers.ModelSerializer):
+    fk_codigos_demora = CodigosDemoraSerializer()
+    fk_vuelo = VueloDetalleSerializer()
+    class Meta:
+        model = turnaround
+        fields = '__all__'
 
 class TurnaroundDetallesSerializer(serializers.ModelSerializer):
     fk_codigos_demora = CodigosDemoraSerializer()
