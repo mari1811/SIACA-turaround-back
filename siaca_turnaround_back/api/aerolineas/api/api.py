@@ -35,7 +35,7 @@ class Aerolinea(APIView):
                 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
-class ModificarAerolinea(APIView):
+class ModificarAerolinea(generics.RetrieveUpdateDestroyAPIView):
     
     def get(self, request, pk=None, *args, **kwargs):
         token = request.GET.get('token')
