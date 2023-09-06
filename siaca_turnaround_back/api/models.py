@@ -95,6 +95,10 @@ class vuelo(models.Model):
     ETD=models.TimeField()
     ETA_fecha=models.DateField()
     ETD_fecha=models.DateField()
+    ATA=models.TimeField(blank=True,null=True)
+    ATD=models.TimeField(blank=True,null=True)
+    ATA_fecha=models.DateField(blank=True,null=True)
+    ATD_fecha=models.DateField(blank=True,null=True)
     gate=models.CharField(max_length=50)
     tipo_vuelo=models.ForeignKey(tipo_vuelo,blank=True,null=True,on_delete=models.CASCADE)
 
