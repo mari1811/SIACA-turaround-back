@@ -36,7 +36,7 @@ class Vuelo(APIView):
                 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
 
-class ModificarVuelo(APIView):
+class ModificarVuelo(generics.RetrieveUpdateDestroyAPIView):
     
     #Buscar un vuelo específico
     def get(self, request, pk=None, *args, **kwargs):
