@@ -51,7 +51,7 @@ class ModificarVuelo(APIView):
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
     #Editar un vuelo
-    def put(self, request, pk=None, *args, **kwargs):
+    def patch(self, request, pk=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
