@@ -11,7 +11,7 @@ from django.utils.http import urlsafe_base64_decode
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('password','username')
+        fields = ('password','username', 'is_active')
 
     def create(self,validated_data):
         user = User(**validated_data)
@@ -30,11 +30,16 @@ class UsuarioListaSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username','first_name','last_name')
 
+class EstadoUsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('is_active',)
 
 class DatosSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
 
 class UpdateUserSeralizer(serializers.ModelSerializer):
     class Meta:
@@ -45,6 +50,11 @@ class UpdateSeralizer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name','last_name')
+
+class IDSolicitudes(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id',)
         
 class DatosListaSerializer(serializers.ModelSerializer):
     fk_user = UpdateUserSeralizer()

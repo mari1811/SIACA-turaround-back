@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes
 from api.models import usuario
 from django.contrib.auth.models import User
 from rest_framework import filters
@@ -89,7 +89,7 @@ class Lista(APIView):
         token = Token.objects.filter(key = token).first()
         if token:
             if request.method == 'GET':
-                datos = usuario.objects.all()
+                datos = usuario.objects.filter(fk_user__is_active = True)
                 datos_serializer = DatosListaSerializer(datos, many = True)
                 return Response (datos_serializer.data, status=status.HTTP_200_OK)
 
@@ -133,4 +133,35 @@ class DeleteUser(APIView):
                 user.delete()
                 return Response({'mensaje':'Usuario eliminada'}, status=status.HTTP_200_OK)
             return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class EstadoUsuario(APIView):
+     
+     #Modificar estado de maquinaria
+        def patch(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                user = User.objects.filter(id = pk).first()
+                if user.is_active == False:
+                    usuario_serializer = EstadoUsuarioSerializer(user, data={"is_active": True})
+                    if usuario_serializer.is_valid():
+                        usuario_serializer.save()
+                        return Response(usuario_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class Solicitudes(APIView):
+
+    def get(self, request, *args, **kwargs):
+    #Lista de usuarios
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            datos = usuario.objects.filter(fk_user__is_active = False)
+
+            datos_serializer = DatosListaSerializer(datos, many=True)
+            return Response (datos_serializer.data, status=status.HTTP_200_OK)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

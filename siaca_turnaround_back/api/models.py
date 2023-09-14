@@ -66,8 +66,8 @@ class cantidad_categoria(models.Model):
     fk_plantilla=models.ForeignKey(plantilla,blank=True,null=True,on_delete=models.CASCADE)
 
 class ciudades(models.Model):
-    nombre=models.CharField(max_length=50)
-    codigo=models.CharField(max_length=50)
+    nombre=models.CharField(max_length=50,blank=True,null=True)
+    codigo=models.CharField(max_length=50,blank=True,null=True)
 
 class ciudades_salida(models.Model):
     nombre=models.CharField(max_length=50)
@@ -78,6 +78,9 @@ class ciudades_destino(models.Model):
     codigo=models.CharField(max_length=50)
 
 class tipo_vuelo(models.Model):
+    nombre=models.CharField(max_length=50)
+
+class tipo_servicio(models.Model):
     nombre=models.CharField(max_length=50)
 
 class vuelo(models.Model):
@@ -101,6 +104,7 @@ class vuelo(models.Model):
     ATD_fecha=models.DateField(blank=True,null=True)
     gate=models.PositiveIntegerField(blank=True,null=True)
     tipo_vuelo=models.ForeignKey(tipo_vuelo,blank=True,null=True,on_delete=models.CASCADE)
+    tipo_servicio=models.ForeignKey(tipo_servicio,blank=True,null=True,on_delete=models.CASCADE)
 
 class turnaround(models.Model):
     identificador=models.PositiveIntegerField(blank=True,null=True)
