@@ -156,7 +156,7 @@ class EstadoUsuario(APIView):
 class Solicitudes(APIView):
 
     def get(self, request, *args, **kwargs):
-    #Lista de usuarios
+    #Lista de solicitudes
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
@@ -164,4 +164,16 @@ class Solicitudes(APIView):
 
             datos_serializer = DatosListaSerializer(datos, many=True)
             return Response (datos_serializer.data, status=status.HTTP_200_OK)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class Contador(APIView):
+
+    def get(self, request, *args, **kwargs):
+    #Contador de solicitudes 
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            contador = usuario.objects.filter(fk_user__is_active = False).count()
+
+            return Response ({"contador":contador}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
