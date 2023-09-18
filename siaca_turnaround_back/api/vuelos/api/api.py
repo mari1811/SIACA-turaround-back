@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import VueloSerializer, ListaVuelosSerializer, CiudadesSerializer, CiudadesSalidaSerializer, CiudadesDestinoSerializer, TipoVueloSerializer
-from api.models import vuelo, ciudades, ciudades_salida, ciudades_destino, tipo_vuelo
+from .serializer import VueloSerializer, ListaVuelosSerializer, CiudadesSerializer, CiudadesSalidaSerializer, CiudadesDestinoSerializer, TipoVueloSerializer, TipoServicioSerializer
+from api.models import vuelo, ciudades, ciudades_salida, ciudades_destino, tipo_vuelo, tipo_servicio
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
@@ -155,7 +155,17 @@ class TipoVuelo(APIView):
                 return Response (tipo_serializer.data, status=status.HTTP_200_OK)
 
 
+class TipoServicio(APIView):
 
+    #Lista tipo de vuelo
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                tipo = tipo_servicio.objects.all()
+                tipo_serializer = TipoServicioSerializer(tipo, many = True)
+                return Response (tipo_serializer.data, status=status.HTTP_200_OK)
 
 
 

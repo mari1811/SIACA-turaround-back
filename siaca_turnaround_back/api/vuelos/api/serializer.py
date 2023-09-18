@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import vuelo, aerolinea, plantilla, ciudades, ciudades_destino, ciudades_salida, tipo_vuelo
+from api.models import vuelo, aerolinea, plantilla, ciudades, ciudades_destino, ciudades_salida, tipo_vuelo, tipo_servicio
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
@@ -39,6 +39,11 @@ class TipoVueloSerializer(serializers.ModelSerializer):
         model = tipo_vuelo
         fields = '__all__'
 
+class TipoServicioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = tipo_servicio
+        fields = '__all__'
+
 class ListaVuelosSerializer(serializers.ModelSerializer):
     fk_aerolinea = AerolineaSerializer()
     fk_plantilla = PlantillaSerializer()
@@ -46,6 +51,7 @@ class ListaVuelosSerializer(serializers.ModelSerializer):
     lugar_salida = CiudadesSalidaSerializer()
     lugar_destino = CiudadesDestinoSerializer()
     tipo_vuelo = TipoVueloSerializer()
+    tipo_servicio = TipoServicioSerializer()
 
     class Meta:
         model = vuelo
