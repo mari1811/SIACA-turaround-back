@@ -68,6 +68,9 @@ class cantidad_categoria(models.Model):
 class ciudades(models.Model):
     nombre=models.CharField(max_length=50,blank=True,null=True)
     codigo=models.CharField(max_length=50,blank=True,null=True)
+    codigo_oaci=models.CharField(max_length=50,blank=True,null=True)
+    pais=models.CharField(max_length=50,blank=True,null=True)
+    aeropuerto=models.CharField(max_length=100,blank=True,null=True)
 
 class tipo_vuelo(models.Model):
     nombre=models.CharField(max_length=50)

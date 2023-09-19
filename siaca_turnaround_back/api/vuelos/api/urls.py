@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import  Vuelo, ModificarVuelo, BuscarVueloFecha, VueloDetalle, Ciudades, TipoVuelo, TipoServicio
+from .api import  Vuelo, ModificarVuelo, BuscarVueloFecha, VueloDetalle, Ciudades, TipoVuelo, TipoServicio, ModificarCiudades, REG
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -16,4 +16,7 @@ urlpatterns=[
     path('lista/ciudades/', Ciudades.as_view(), name= 'ciudades'),
     path('lista/tipo-vuelo/', TipoVuelo.as_view(), name= 'tipo_vuelo'),
     path('lista/tipo-servicio/', TipoServicio.as_view(), name= 'tipo_servicio'),
+    path('ciudades/', ModificarCiudades.as_view(), name= 'ciudades_agregar'),
+    path('ciudades/<int:pk>/', ModificarCiudades.as_view(), name= 'ciudades_crud'),
+    path('ac-reg/', REG.as_view(), name= 'ac_reg'),
 ]

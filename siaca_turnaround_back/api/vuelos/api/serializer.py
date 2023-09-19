@@ -9,6 +9,11 @@ class VueloSerializer(serializers.ModelSerializer):
         model = vuelo
         fields = '__all__'
 
+class REGSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = vuelo
+        fields = ('ac_reg',)
+
 class AerolineaSerializer(serializers.ModelSerializer):
     class Meta:
         model = aerolinea

@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import VueloSerializer, ListaVuelosSerializer, CiudadesSerializer, TipoVueloSerializer, TipoServicioSerializer
+from .serializer import VueloSerializer, ListaVuelosSerializer, CiudadesSerializer, TipoVueloSerializer, TipoServicioSerializer, REGSerializer
 from api.models import vuelo, ciudades, tipo_vuelo, tipo_servicio
 from rest_framework import filters
 from rest_framework import generics
@@ -145,6 +145,56 @@ class TipoServicio(APIView):
                 return Response (tipo_serializer.data, status=status.HTTP_200_OK)
 
 
+class ModificarCiudades(generics.RetrieveUpdateDestroyAPIView):
+    
+    #Agergar ciudad
+    def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                ciudades_serializer = CiudadesSerializer(data = request.data)
+                if ciudades_serializer.is_valid():
+                    ciudades_serializer.save()
+                    return Response(ciudades_serializer.data, status=status.HTTP_201_CREATED)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #Editar una ciudad
+    def patch(self, request, pk=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            ciudad = ciudades.objects.filter(id = pk).first()
+            if ciudad:
+                ciuaddes_serializer = CiudadesSerializer(ciudad, data=request.data)
+                if ciuaddes_serializer.is_valid():
+                    ciuaddes_serializer.save()
+                    return Response(ciuaddes_serializer.data, status=status.HTTP_200_OK)
+            return Response({'mensaje':'No se ha encontrado la ciudad'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    #Eliminar una ciudad
+    def delete(self, request, pk=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            ciudad = ciudades.objects.filter(id = pk).first()
+            if ciudad:
+                ciudad.delete()
+                return Response({'mensaje':'Ciudad eliminada'}, status=status.HTTP_200_OK)
+            return Response({'mensaje':'No se ha encontrado la ciudad'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class REG(APIView):
 
+    #Filtro de REG
+    def get(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                reg = vuelo.objects.order_by("ac_reg").values("ac_reg").distinct()
+                reg_serializer = REGSerializer(reg, many = True)
+                return Response (reg_serializer.data, status=status.HTTP_200_OK)
