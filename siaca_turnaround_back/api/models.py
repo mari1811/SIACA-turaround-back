@@ -69,14 +69,6 @@ class ciudades(models.Model):
     nombre=models.CharField(max_length=50,blank=True,null=True)
     codigo=models.CharField(max_length=50,blank=True,null=True)
 
-class ciudades_salida(models.Model):
-    nombre=models.CharField(max_length=50)
-    codigo=models.CharField(max_length=50)
-
-class ciudades_destino(models.Model):
-    nombre=models.CharField(max_length=50)
-    codigo=models.CharField(max_length=50)
-
 class tipo_vuelo(models.Model):
     nombre=models.CharField(max_length=50)
 
@@ -86,12 +78,12 @@ class tipo_servicio(models.Model):
 class vuelo(models.Model):
     fk_aerolinea=models.ForeignKey(aerolinea,blank=True,null=True,on_delete=models.CASCADE)
     fk_plantilla=models.ForeignKey(plantilla,blank=True,null=True,on_delete=models.CASCADE)
-    stn=models.ForeignKey(ciudades,blank=True,null=True,on_delete=models.CASCADE)
+    stn=models.ForeignKey(ciudades,blank=True,null=True,on_delete=models.CASCADE,related_name='ciudades_stn')
     ac_reg=models.CharField(max_length=50, blank=True,null=True)
     ac_type=models.CharField(max_length=50, blank=True,null=True)
     estado=models.CharField(max_length=50, blank=True,null=True)
-    lugar_salida=models.ForeignKey(ciudades_salida,blank=True,null=True,on_delete=models.CASCADE)
-    lugar_destino=models.ForeignKey(ciudades_destino,blank=True,null=True,on_delete=models.CASCADE)
+    lugar_salida=models.ForeignKey(ciudades,blank=True,null=True,on_delete=models.CASCADE,related_name='ciudades_salida')
+    lugar_destino=models.ForeignKey(ciudades,blank=True,null=True,on_delete=models.CASCADE,related_name='ciudades_destino')
     ente_pagador=models.CharField(max_length=50, blank=True,null=True)
     numero_vuelo=models.CharField(max_length=50, blank=True,null=True)
     ETA=models.TimeField(blank=True,null=True)
@@ -105,6 +97,7 @@ class vuelo(models.Model):
     gate=models.PositiveIntegerField(blank=True,null=True)
     tipo_vuelo=models.ForeignKey(tipo_vuelo,blank=True,null=True,on_delete=models.CASCADE)
     tipo_servicio=models.ForeignKey(tipo_servicio,blank=True,null=True,on_delete=models.CASCADE)
+    icao_hex=models.CharField(max_length=50, blank=True,null=True)
 
 class turnaround(models.Model):
     identificador=models.PositiveIntegerField(blank=True,null=True)
