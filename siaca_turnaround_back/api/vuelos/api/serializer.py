@@ -9,15 +9,17 @@ class VueloSerializer(serializers.ModelSerializer):
         model = vuelo
         fields = '__all__'
 
-class REGSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = vuelo
-        fields = ('ac_reg',)
 
 class AerolineaSerializer(serializers.ModelSerializer):
     class Meta:
         model = aerolinea
-        fields =('nombre',)
+        fields =('nombre','id')
+
+class REGSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = vuelo
+        fields = ('ac_reg','fk_aerolinea_id')
 
 class PlantillaSerializer(serializers.ModelSerializer):
     class Meta:

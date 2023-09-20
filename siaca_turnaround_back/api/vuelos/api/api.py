@@ -195,6 +195,6 @@ class REG(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                reg = vuelo.objects.order_by("ac_reg").values("ac_reg").distinct()
+                reg = vuelo.objects.order_by("ac_reg").values("ac_reg", "fk_aerolinea_id").distinct()
                 reg_serializer = REGSerializer(reg, many = True)
                 return Response (reg_serializer.data, status=status.HTTP_200_OK)
