@@ -146,6 +146,18 @@ class TipoServicio(APIView):
 
 
 class ModificarCiudades(generics.RetrieveUpdateDestroyAPIView):
+
+  #Buscar un ciudad específico
+    def get(self, request, pk=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            ciudad = ciudades.objects.filter(id = pk).first()
+            if ciudad:
+                ciudad_serializer = CiudadesSerializer(ciudad)
+                return Response(ciudad_serializer.data, status=status.HTTP_200_OK)
+            return Response({'mensaje':'No se ha encontrado el vuelo'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
     #Agergar ciudad
     def post(self, request, *args, **kwargs):
