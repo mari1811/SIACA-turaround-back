@@ -10,6 +10,7 @@ from rest_framework import generics
 from rest_framework.authtoken.models import Token
 
 
+
 class Vuelo(APIView):
 
     #Lista de Vuelos
@@ -210,3 +211,20 @@ class REG(APIView):
                 reg = vuelo.objects.order_by("ac_reg").values("ac_reg", "fk_aerolinea_id").distinct()
                 reg_serializer = REGSerializer(reg, many = True)
                 return Response (reg_serializer.data, status=status.HTTP_200_OK)
+            
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class BuscarVueloAerolinea(APIView):
+        
+        def get(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                fly = vuelo.objects.filter(fk_aerolinea_id = pk).order_by("-ETD_fecha")
+                if fly:
+                    vuelo_serializer = ListaVuelosSerializer(fly, many = True)
+                    return Response(vuelo_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No hay vuelos en esta aerolinea'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
