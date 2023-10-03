@@ -160,9 +160,9 @@ class VistaSubtarea(APIView):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
-            detalles = subtarea.objects.filter(fk_tarea_id = pk)
+            detalles = subtarea.objects.filter(fk_tarea__fk_plantilla_id = pk)
             if detalles:
-                plantilla_serializer =SubareaVistaSerializer(detalles, many = True)
+                plantilla_serializer = SubareaVistaSerializer(detalles, many = True)
                 return Response(plantilla_serializer.data, status=status.HTTP_200_OK)
             return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

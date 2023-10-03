@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import  Maquiarias, BuscarCategoria, ModificarMaquinaria, MaquinariaTurnaround, EstadoMaquinaria, ListaCategoria, BuscarMaquinaria
+from .api import  Maquiarias, BuscarCategoria, ModificarMaquinaria, MaquinariaTurnaround, EstadoMaquinaria, ListaCategoria, BuscarMaquinaria, MaquinariaHistorial
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -15,4 +15,6 @@ urlpatterns=[
     path('estado/<int:pk>/', EstadoMaquinaria.as_view(), name='estado_maquinaria'),
     path('categorias/', ListaCategoria.as_view(), name='lista_categoria'),
     path('buscar/<int:pk>/', BuscarMaquinaria.as_view(), name='maquinaria_buscar'),
+    path('reserva/', MaquinariaHistorial.as_view(), name='maquinaria_reserva'),
+    path('reserva/<int:pk>/', MaquinariaHistorial.as_view(), name='maquinaria_reserva_categoria'),
 ]

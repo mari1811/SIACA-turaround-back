@@ -21,7 +21,7 @@ class SubtareaSerializer(serializers.ModelSerializer):
 class VistaPlantillaSerializer(serializers.ModelSerializer):
     class Meta:
         model = plantilla
-        fields = ('titulo',)
+        fields = '__all__'
 
 class TareaVistaSerializer(serializers.ModelSerializer):
     fk_plantilla = VistaPlantillaSerializer()

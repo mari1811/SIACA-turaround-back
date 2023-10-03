@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import maquinaria, maquinaria_turnaround, categoria
+from api.models import maquinaria, maquinaria_turnaround, categoria, maquinaria_historial
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
@@ -12,7 +12,7 @@ class MaquinariaTuraroundDatosSerializer(serializers.ModelSerializer):
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = categoria
-        fields = ('nombre',)
+        fields = ('nombre','id')
 
 class ListaCategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,3 +50,15 @@ class MaquinariaEstadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = maquinaria
         fields = ('estado',)
+
+class MaquinariaHistorialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = maquinaria_historial
+        fields = '__all__'
+
+class MaquinariaCategoriaSerializer(serializers.ModelSerializer):
+
+    fk_maquinaria = MaquinariaSerializer()
+    class Meta:
+        model = maquinaria_historial
+        fields = '__all__'
