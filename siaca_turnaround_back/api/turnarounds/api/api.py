@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import TurnaroundSerializer, CodigosSerializer, MaquinariaTuraroundSerializer, UsuarioTuraroundSerializer, TurnaroundDetallesSerializer, MaquinariaDetallesSerializer, TurnaroundFechaSerializer
-from api.models import turnaround, usuario_turnaround, maquinaria_turnaround, codigos_demora, maquinaria
+from .serializer import TurnaroundSerializer, CodigosSerializer,  UsuarioTuraroundSerializer, TurnaroundDetallesSerializer,  TurnaroundFechaSerializer
+from api.models import turnaround, usuario_turnaround, codigos_demora, maquinaria
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
@@ -96,33 +96,4 @@ class TurnaroundDetalles(APIView):
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
         
         
-
-class MaquinariaDetalles(APIView):
         
-        def get(self, request, pk=None, *args, **kwargs):
-            token = request.GET.get('token')
-            token = Token.objects.filter(key = token).first()
-            if token:
-                maquinarias = maquinaria_turnaround.objects.filter(fk_turnaround = pk)
-                if maquinarias:
-                    maquinaria_serializer = MaquinariaDetallesSerializer(maquinarias, many = True)
-                    return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
-                return Response({'mensaje':'No hay vuelos en esa fecha'}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
-        
-
-class MaquinariaTurnaround(APIView):
-
-    #Crear una Maquinaria      
-    def post(self, request, *args, **kwargs):
-        
-            token = request.GET.get('token')
-            token = Token.objects.filter(key = token).first()
-            if token:
-                maquinaria_serializer = MaquinariaTuraroundSerializer(data = request.data)
-                if maquinaria_serializer.is_valid():
-                    maquinaria_serializer.save()
-                    return Response(maquinaria_serializer.data, status=status.HTTP_201_CREATED)
-                return Response({'mensaje':'Datos no válidos'}, status=status.HTTP_201_CREATED)
-                
-            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

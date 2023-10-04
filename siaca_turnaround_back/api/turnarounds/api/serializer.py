@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import turnaround, usuario_turnaround, maquinaria_turnaround, codigos_demora, vuelo, maquinaria, ciudades, aerolinea, tipo_vuelo, plantilla
+from api.models import turnaround, usuario_turnaround, codigos_demora, vuelo, maquinaria, ciudades, aerolinea, tipo_vuelo, plantilla
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
@@ -14,10 +14,6 @@ class CodigosSerializer(serializers.ModelSerializer):
         model = codigos_demora
         fields = '__all__'
 
-class MaquinariaTuraroundSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = maquinaria_turnaround
-        fields = '__all__'
 
 class UsuarioTuraroundSerializer(serializers.ModelSerializer):
     class Meta:
@@ -88,10 +84,5 @@ class MaquinariaSerializer(serializers.ModelSerializer):
         model = maquinaria
         fields = '__all__'
 
-class MaquinariaDetallesSerializer(serializers.ModelSerializer):
-    fk_turnaround = TurnaroundDetallesSerializer()
-    fk_maquinaria = MaquinariaSerializer()
-    class Meta:
-        model = maquinaria_turnaround
-        fields = '__all__'
+
 

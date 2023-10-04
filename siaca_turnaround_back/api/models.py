@@ -22,12 +22,6 @@ class maquinaria(models.Model):
     fk_categoria=models.ForeignKey(categoria,blank=True,null=True,on_delete=models.CASCADE)
     imagen=models.CharField(max_length=50, null=True)
 
-class maquinaria_historial(models.Model):
-    fk_maquinaria=models.ForeignKey(maquinaria,blank=True,null=True,on_delete=models.CASCADE)
-    hora_inicio=models.TimeField(blank=True,null=True)
-    hora_fin=models.TimeField(blank=True,null=True)
-    fecha=models.DateField(blank=True,null=True)
-
 class codigos_demora(models.Model):
     identificador=models.PositiveIntegerField()
     alpha=models.CharField(max_length=50)
@@ -117,9 +111,12 @@ class turnaround(models.Model):
     fecha_inicio=models.DateField(blank=True,null=True)
     fecha_fin=models.DateField(blank=True,null=True)
 
-class maquinaria_turnaround(models.Model):
-    fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
+class maquinaria_historial(models.Model):
     fk_maquinaria=models.ForeignKey(maquinaria,blank=True,null=True,on_delete=models.CASCADE)
+    hora_inicio=models.TimeField(blank=True,null=True)
+    hora_fin=models.TimeField(blank=True,null=True)
+    fecha=models.DateField(blank=True,null=True)
+    fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
 
 class usuario_turnaround(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
