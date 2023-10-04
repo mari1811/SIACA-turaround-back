@@ -16,5 +16,5 @@ urlpatterns=[
     path('categorias/', ListaCategoria.as_view(), name='lista_categoria'),
     path('buscar/<int:pk>/', BuscarMaquinaria.as_view(), name='maquinaria_buscar'),
     path('reserva/', MaquinariaHistorial.as_view(), name='maquinaria_reserva'),
-    path('reserva/<int:pk>/', MaquinariaHistorial.as_view(), name='maquinaria_reserva_categoria'),
+    path('reserva/<str:fecha>/<str:horaI>/<str:horaF>/', MaquinariaHistorial.as_view(), name='maquinaria_reserva_categoria'),
 ]

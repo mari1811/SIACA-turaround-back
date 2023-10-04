@@ -8,7 +8,7 @@ from api.models import maquinaria, maquinaria_turnaround, categoria, maquinaria_
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Maquiarias(APIView):
@@ -179,11 +179,15 @@ class MaquinariaHistorial(APIView):
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
     #Buscar maquinarias por categoria
-    def get(self, request, pk=None, *args, **kwargs):
+    def get(self, request, fecha=None, horaI=None, horaF=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
-            maquinarias = maquinaria_historial.objects.filter(fk_maquinaria__fk_categoria = pk).filter(hora_inicio__range = ('09:00','09:30')).filter(fecha = datetime.now()).all()
+            hourI= datetime.strptime(horaI, '%H:%M')
+            hourF= datetime.strptime(horaF, '%H:%M')
+            min = timedelta(minutes=30)
+            max = timedelta(minutes=60)
+            maquinarias = maquinaria_historial.objects.filter(fecha = fecha).filter(hora_inicio__range = (hourI - min, hourF + max)).all() | maquinaria_historial.objects.filter(fecha = fecha).filter(hora_fin__range = (hourI - min, hourF + max)).all()
             if maquinarias:
                 maquinaria_serializer = MaquinariaCategoriaSerializer(maquinarias, many = True)
                 return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
