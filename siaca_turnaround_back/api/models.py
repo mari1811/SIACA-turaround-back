@@ -120,7 +120,10 @@ class maquinaria_historial(models.Model):
 
 class usuario_turnaround(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
-    fk_user=models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
+    fk_usuario=models.ForeignKey(usuario,blank=True,null=True,on_delete=models.CASCADE)
+    hora_inicio=models.TimeField(blank=True,null=True)
+    hora_fin=models.TimeField(blank=True,null=True)
+    fecha=models.DateField(blank=True,null=True)
 
 class Imagen(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)

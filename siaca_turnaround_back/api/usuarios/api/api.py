@@ -3,12 +3,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes
-from api.models import usuario
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer
+from api.models import usuario, usuario_turnaround
 from django.contrib.auth.models import User
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
+from datetime import datetime, timedelta
 
 
 
@@ -176,4 +177,36 @@ class Contador(APIView):
             contador = usuario.objects.filter(fk_user__is_active = False).count()
 
             return Response ({"contador":contador}, status=status.HTTP_200_OK)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class UsuarioHistorial(APIView):
+     
+    #Asignar hora inicio y fin     
+    def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                usuario_serializer = UsuarioDatosTurnaroundSerializer(data = request.data)
+                if usuario_serializer.is_valid():
+                    usuario_serializer.save()
+                    return Response(usuario_serializer.data, status=status.HTTP_201_CREATED)
+                return Response({'mensaje':'Datos no válidos'}, status=status.HTTP_400_BAD_REQUEST)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #Buscar maquinarias por categoria
+    def get(self, request, fecha=None, horaI=None, horaF=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            hourI= datetime.strptime(horaI, '%H:%M')
+            hourF= datetime.strptime(horaF, '%H:%M')
+            min = timedelta(minutes=10)
+            max = timedelta(minutes=60)
+            usuarios = usuario_turnaround.objects.filter(fecha = fecha).filter(hora_inicio__range = (hourI , hourF )).all() | usuario_turnaround.objects.filter(fecha = fecha).filter(hora_fin__range = (hourI , hourF )).all()
+            if usuarios:
+                usuario_serializer = UsuarioTurnaroundSerializer(usuarios, many = True)
+                return Response(usuario_serializer.data, status=status.HTTP_200_OK)
+            return Response([{}])
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

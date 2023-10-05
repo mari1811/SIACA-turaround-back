@@ -2,6 +2,7 @@ from rest_framework import serializers
 from api.models import usuario
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from api.models import usuario, usuario_turnaround, turnaround
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
@@ -72,6 +73,22 @@ class IDSerialier(serializers.ModelSerializer):
         model = User
         fields = ('id',)
 
+class TurnaroundSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = turnaround
+        fields = '__all__'
+
+class UsuarioDatosTurnaroundSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = usuario_turnaround
+        fields = '__all__'
+
+class UsuarioTurnaroundSerializer(serializers.ModelSerializer):
+    fk_usuario = DatosListaSerializer()
+    fk_turnaround = TurnaroundSerializer()
+    class Meta:
+        model = usuario_turnaround
+        fields = '__all__'
 
 
 
