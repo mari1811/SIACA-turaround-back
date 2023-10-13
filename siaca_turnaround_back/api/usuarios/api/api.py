@@ -10,7 +10,9 @@ from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, F, Value, Func, CharField
+from django.db.models.functions import Concat
+
 
 
 
@@ -220,8 +222,9 @@ class MetricaTurnaroundPersonal(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                usuarios = usuario_turnaround.objects.values('fk_usuario__id','fk_usuario__fk_user__first_name','fk_usuario__fk_user__last_name','fk_usuario__departamento').annotate(contador=Count('fk_usuario__id')).filter(contador__gt=0)
+                usuarios = usuario_turnaround.objects.values( 'fk_usuario__id','fk_usuario__departamento')
+                contador = usuarios.annotate(contador=Count('fk_usuario__id')).filter(contador__gt=0).annotate(full_name=Concat('fk_usuario__fk_user__first_name', Value(' '), 'fk_usuario__fk_user__last_name',  output_field=CharField()))
                 if usuarios:
-                    return Response(usuarios , status=status.HTTP_200_OK)
+                    return Response(contador , status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
