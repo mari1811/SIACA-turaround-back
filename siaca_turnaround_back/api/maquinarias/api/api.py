@@ -9,6 +9,7 @@ from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
+from django.db.models import Count, Sum
 
 
 class Maquiarias(APIView):
@@ -166,6 +167,20 @@ class MaquinariaHistorial(APIView):
                 return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
             return Response([{}])
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class MetricaUsoMaquinaria(APIView):
+        
+        #Metrica de numeor de usos de maquinarias 
+        def get(self, request, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                maquinarias = maquinaria_historial.objects.values('fk_maquinaria__fk_categoria__nombre','fk_maquinaria__identificador','fk_maquinaria_id').annotate(contador=Count('fk_maquinaria__identificador')).filter(contador__gt=0)
+                if maquinarias:
+                    return Response(maquinarias , status=status.HTTP_200_OK)
+                return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
      
      
      

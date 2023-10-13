@@ -10,6 +10,7 @@ from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
+from django.db.models import Count, Sum
 
 
 
@@ -210,3 +211,17 @@ class UsuarioHistorial(APIView):
                 return Response(usuario_serializer.data, status=status.HTTP_200_OK)
             return Response([{}])
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class MetricaTurnaroundPersonal(APIView):
+        
+        #Metrica de numeor de usos de maquinarias 
+        def get(self, request, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                usuarios = usuario_turnaround.objects.values('fk_usuario__id','fk_usuario__fk_user__first_name','fk_usuario__fk_user__last_name','fk_usuario__departamento').annotate(contador=Count('fk_usuario__id')).filter(contador__gt=0)
+                if usuarios:
+                    return Response(usuarios , status=status.HTTP_200_OK)
+                return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
