@@ -182,7 +182,19 @@ class MetricaUsoMaquinaria(APIView):
                 return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
      
-     
+class MaquinariaTurnaround(APIView):
+        
+        #Buscar maquinarias por categoria
+        def get(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                maquinarias = maquinaria_historial.objects.filter(fk_turnaround__id = pk).all()
+                if maquinarias:
+                    maquinaria_serializer = MaquinariaHistorialSerializer(maquinarias,  many = True)
+                    return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
      
 
         
