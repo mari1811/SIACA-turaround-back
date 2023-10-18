@@ -189,9 +189,9 @@ class MaquinariaTurnaround(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                maquinarias = maquinaria_historial.objects.filter(fk_turnaround__id = pk).all()
+                maquinarias = maquinaria_historial.objects.filter(fk_turnaround__id = pk).order_by("fk_maquinaria__fk_categoria__id").all()
                 if maquinarias:
-                    maquinaria_serializer = MaquinariaHistorialSerializer(maquinarias,  many = True)
+                    maquinaria_serializer = MaquinariaCategoriaSerializer(maquinarias,  many = True)
                     return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
