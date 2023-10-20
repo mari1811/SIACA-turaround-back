@@ -12,5 +12,6 @@ urlpatterns=[
     path('<str:fecha>/', BuscarTurnaroundFecha.as_view(), name='buscar_fecha'),
     path('eliminar/<int:pk>/', EliminarTurnaround.as_view(), name='eliminar_turnaround'),
     path('detalles/<int:pk>/', TurnaroundDetalles.as_view(), name='detalles_turnaround'),
+    
 
 ]

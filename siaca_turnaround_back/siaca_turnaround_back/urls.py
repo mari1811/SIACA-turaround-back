@@ -27,5 +27,6 @@ urlpatterns = [
     path('turnarounds/', include('api.turnarounds.api.urls')),
     path('maquinarias/', include('api.maquinarias.api.urls')),
     path('documentos/', include('api.documentos.api.urls')),
+    path('metricas/', include('api.metricas.api.urls')), 
     
 ]

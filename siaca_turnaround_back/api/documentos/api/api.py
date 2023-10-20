@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import DocumentosDatosSerializer, VueloSerializer, DocumentosSerializer
-from api.models import documento, vuelo
+from .serializer import DocumentosDatosSerializer, VueloSerializer, DocumentosSerializer, HoraInicioSerializer, HoraInicioFinSerializer, ImagenSerializer, ComentarioSerializer, TurnaoundSerializer
+from api.models import documento, vuelo, maquinaria, Hora, HoraInicioFin, Comentario, Imagen, turnaround
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
@@ -38,4 +38,89 @@ class Documento(APIView):
                      return Response({'mensaje':'Data no válida'}, status=status.HTTP_400_BAD_REQUEST)
                 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
 
+class ComentarioTurnaround(APIView):
+
+        #Crear un Turnaround      
+        def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                turnarounds_serializer = ComentarioSerializer(data = request.data)
+                if turnarounds_serializer.is_valid():
+                    turnarounds_serializer.save()
+                    return Response(turnarounds_serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                     return Response({'mensaje':'Data no válida'}, status=status.HTTP_400_BAD_REQUEST)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class HoraInicioTurnaround(APIView):
+
+        #Crear un Turnaround      
+        def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                turnarounds_serializer = HoraInicioSerializer(data = request.data)
+                if turnarounds_serializer.is_valid():
+                    turnarounds_serializer.save()
+                    return Response(turnarounds_serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                     return Response({'mensaje':'Data no válida'}, status=status.HTTP_400_BAD_REQUEST)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class HoraInicioFinTurnaround(APIView):
+
+        #Crear un Turnaround      
+        def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                turnarounds_serializer = HoraInicioFinSerializer(data = request.data)
+                if turnarounds_serializer.is_valid():
+                    turnarounds_serializer.save()
+                    return Response(turnarounds_serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                     return Response({'mensaje':'Data no válida'}, status=status.HTTP_400_BAD_REQUEST)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class ImagenTurnaround(APIView):
+
+        #Crear un Turnaround      
+        def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                turnarounds_serializer = ImagenSerializer(data = request.data)
+                if turnarounds_serializer.is_valid():
+                    turnarounds_serializer.save()
+                    return Response(turnarounds_serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                     return Response({'mensaje':'Data no válida'}, status=status.HTTP_400_BAD_REQUEST)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class TareasTurnaround(APIView):
+
+    #Lista de Docuemntos
+    def get(self, request, pk=None, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                datos = turnaround.objects.filter(id = pk).first()
+                documento_serializer = TurnaoundSerializer(datos)
+                return Response (documento_serializer.data, status=status.HTTP_200_OK)
+
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

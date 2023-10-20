@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import TurnaroundSerializer, CodigosSerializer,  UsuarioTuraroundSerializer, TurnaroundDetallesSerializer,  TurnaroundFechaSerializer
-from api.models import turnaround, usuario_turnaround, codigos_demora, maquinaria
+from .serializer import TurnaroundSerializer, CodigosSerializer,  UsuarioTuraroundSerializer, TurnaroundDetallesSerializer
+from api.models import turnaround, usuario_turnaround, codigos_demora
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
@@ -94,6 +94,8 @@ class TurnaroundDetalles(APIView):
                     return Response(turnaround_serializer.data, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay vuelos en esa fecha'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
         
         
         

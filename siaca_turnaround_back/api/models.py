@@ -128,23 +128,23 @@ class usuario_turnaround(models.Model):
 class Imagen(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
     fk_subtarea=models.ForeignKey(subtarea,blank=True,null=True,on_delete=models.CASCADE)
-    link=models.CharField(max_length=200)
+    link=models.CharField(blank=True,null=True,max_length=200)
 
 class Hora(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
     fk_subtarea=models.ForeignKey(subtarea,blank=True,null=True,on_delete=models.CASCADE)
-    hora_inicio=models.DateTimeField()
+    hora_inicio=models.TimeField(blank=True,null=True)
 
 class HoraInicioFin(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
     fk_subtarea=models.ForeignKey(subtarea,blank=True,null=True,on_delete=models.CASCADE)
-    hora_inicio=models.DateTimeField()
-    hora_fin=models.DateTimeField()
+    hora_inicio=models.TimeField(blank=True,null=True)
+    hora_fin=models.TimeField(blank=True,null=True)
 
 class Comentario(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
     fk_subtarea=models.ForeignKey(subtarea,blank=True,null=True,on_delete=models.CASCADE)
-    comentario=models.CharField(max_length=200)
+    comentario=models.CharField(blank=True,null=True,max_length=200)
 
 class documento(models.Model):
     fk_vuelo=models.ForeignKey(vuelo,blank=True,null=True,on_delete=models.CASCADE)
