@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import TurnaroundSerializer, CodigosSerializer,  UsuarioTuraroundSerializer, TurnaroundDetallesSerializer
+from .serializer import TurnaroundSerializer, CodigosSerializer,  UsuarioTuraroundSerializer, TurnaroundDetallesSerializer, TurnaroundFechaSerializer
 from api.models import turnaround, usuario_turnaround, codigos_demora
 from rest_framework import filters
 from rest_framework import generics
