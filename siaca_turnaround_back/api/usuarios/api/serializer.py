@@ -41,6 +41,21 @@ class DatosSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+class DatosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
+class CargoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = cargo
+        fields = '__all__' 
+        
+class DepartamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = departamento
+        fields = '__all__' 
 
 class UpdateUserSeralizer(serializers.ModelSerializer):
     class Meta:

@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer, CargoSerializer, DepartamentoSerializer
 from api.models import usuario, usuario_turnaround, departamento, cargo
 from django.contrib.auth.models import User
 from rest_framework import filters
@@ -37,18 +37,20 @@ def usuario_api_view(request):
 class Departamento(APIView):
 
     def get(self, request, *args, **kwargs):
-    #Lista de usuarios
-        if request.method == 'GET':
-            datos = departamento.objects.all()
-            return Response (datos, status=status.HTTP_200_OK)
+        
+            if request.method == 'GET':
+                datos = departamento.objects.all()
+                datos_serializer = DepartamentoSerializer(datos, many = True)
+                return Response (datos_serializer.data, status=status.HTTP_200_OK)
             
 class Cargo(APIView):
 
     def get(self, request, *args, **kwargs):
-    #Lista de usuarios
-        if request.method == 'GET':
-            datos = cargo.objects.all()
-            return Response (datos, status=status.HTTP_200_OK)
+        
+            if request.method == 'GET':
+                datos = cargo.objects.all()
+                datos_serializer = CargoSerializer(datos, many = True)
+                return Response (datos_serializer.data, status=status.HTTP_200_OK)
     
 @api_view(['GET','PUT','DELETE'])
 def usuarios_detalles_view(request, pk=None):
