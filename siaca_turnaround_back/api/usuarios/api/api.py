@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer
-from api.models import usuario, usuario_turnaround
+from api.models import usuario, usuario_turnaround, departamento, cargo
 from django.contrib.auth.models import User
 from rest_framework import filters
 from rest_framework import generics
@@ -33,8 +33,23 @@ def usuario_api_view(request):
             return Response(usuarios_serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(usuarios_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class Departamento(APIView):
 
+    def get(self, request, *args, **kwargs):
+    #Lista de usuarios
+        if request.method == 'GET':
+            datos = departamento.objects.all()
+            return Response (datos, status=status.HTTP_200_OK)
+            
+class Cargo(APIView):
 
+    def get(self, request, *args, **kwargs):
+    #Lista de usuarios
+        if request.method == 'GET':
+            datos = cargo.objects.all()
+            return Response (datos, status=status.HTTP_200_OK)
+    
 @api_view(['GET','PUT','DELETE'])
 def usuarios_detalles_view(request, pk=None):
     #Consulta de usuario

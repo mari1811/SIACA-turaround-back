@@ -3,11 +3,17 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+class departamento(models.Model):
+    nombre=models.CharField(max_length=100,blank=True,null=True)
+
+class cargo(models.Model):
+    nombre=models.CharField(max_length=100,blank=True,null=True)
+
 class usuario(models.Model):
     fk_user=models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
     cedula=models.BigIntegerField()
-    cargo=models.CharField(max_length=50)
-    departamento=models.CharField(max_length=50)
+    fk_cargo=models.ForeignKey(cargo,blank=True,null=True,on_delete=models.CASCADE)
+    fk_departamento=models.ForeignKey(departamento,blank=True,null=True,on_delete=models.CASCADE)
     telefono=models.CharField(max_length=50)
     turno=models.CharField(max_length=50)
 

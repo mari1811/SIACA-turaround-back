@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models import usuario
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from api.models import usuario, usuario_turnaround, turnaround
+from api.models import usuario, usuario_turnaround, turnaround, cargo, departamento
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
