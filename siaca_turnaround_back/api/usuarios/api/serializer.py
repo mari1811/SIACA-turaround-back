@@ -74,6 +74,8 @@ class IDSolicitudes(serializers.ModelSerializer):
         
 class DatosListaSerializer(serializers.ModelSerializer):
     fk_user = UpdateUserSeralizer()
+    fk_departamento = DepartamentoSerializer()
+    fk_cargo = CargoSerializer()
     class Meta:
         model = usuario
         fields = '__all__'
