@@ -1,9 +1,10 @@
 from django.urls import path
-from .api import Plantilla, Tarea, Subtarea, VistaPlantilla, VistaSubtarea, Maquinaria, VistaMaquinaria, Categoria, Tipo, ContadorMaquinaria
+from .api import Plantilla, Tarea, Subtarea, VistaPlantilla, VistaSubtarea, Maquinaria, VistaMaquinaria, Categoria, Tipo, ContadorMaquinaria, Plantillas
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+
 
 urlpatterns=[
 
@@ -16,8 +17,8 @@ urlpatterns=[
     path('tipos/', Tipo.as_view(), name='lista_tipos'),
     path('vista/<int:pk>/', VistaPlantilla.as_view(), name='vista'),
     path('subtarea/<int:pk>/', VistaSubtarea.as_view(), name='subtarea'),
-    path('contador/', ContadorMaquinaria.as_view(), name='contador')
-
+    path('contador/', ContadorMaquinaria.as_view(), name='contador'),
+    path('plantillas/', Plantillas.as_view(), name='obtener_plantillas'),
 
 ]
 

@@ -3,11 +3,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, TareaVistaSerializer, SubareaVistaSerializer, CantidadSerializer, CategoriaSerializer, PlantillaMaquinariaSerializer, TipoSerializer
-from api.models import plantilla, tarea, subtarea, cantidad_categoria, categoria, tipo
+from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, TareaVistaSerializer, SubareaVistaSerializer, CantidadSerializer, CategoriaSerializer, PlantillaMaquinariaSerializer, TipoSerializer, PlantillaTareaSubtareaSerializer
+from api.models import plantilla, tarea, subtarea, cantidad_categoria, categoria, tipo, tipo_subtarea, Hora
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
+from django.db.models import F, Q
+from django.http import JsonResponse
+from django.db import connection
+
 
 
 class Plantilla(APIView):
@@ -193,3 +197,18 @@ class ContadorMaquinaria(APIView):
 
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class Plantillas(APIView):
+     
+     def get (self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            result = subtarea.objects.filter(fk_tarea__fk_plantilla__titulo = "PLANTILLA DE PRUEBA").filter(fk_tipo__nombre="Hora inicio").all() | subtarea.objects.filter(
+                                            fk_tarea__fk_plantilla__titulo = "PLANTILLA DE PRUEBA").filter(fk_tipo__nombre="Hora inicio y fin").all()
+            plantilla_serializer = PlantillaTareaSubtareaSerializer(result, many = True)
+            
+            return Response(plantilla_serializer.data, status=status.HTTP_200_OK)
+
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+     
