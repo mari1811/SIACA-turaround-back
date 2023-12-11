@@ -39,7 +39,10 @@ class Login(ObtainAuthToken):
                 return Response({
                     'token': token.key,
                     'value': True,
-                    'username': user.username
+                    'username': user.username,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'id': user.id
                 })
             
         else:
