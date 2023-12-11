@@ -3,17 +3,23 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from api.models import maquinaria, categoria, maquinaria_historial, usuario_turnaround, turnaround, aerolinea, vuelo, plantilla, Hora, HoraInicioFin
+from api.models import maquinaria, categoria, maquinaria_historial, usuario_turnaround, turnaround, aerolinea, vuelo, plantilla, Hora, HoraInicioFin, subtarea
 from .serializer import PlantillaSerializer, VueloSerializer, HoraInicioSerializer, HoraInicioFinSerializer
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
-from django.db.models import Count, Sum, F, Value, Func, CharField, DateTimeField, TimeField
-from django.db.models import  FloatField, ExpressionWrapper, F, Avg, Q, DurationField, IntegerField
+from django.db.models import Count, Sum, F, Value, Func, CharField, DateTimeField, TimeField, Subquery, Min, Max
+from django.db.models import  FloatField, ExpressionWrapper, F, Avg, Q, DurationField, IntegerField, fields
 from django.db.models.functions import Concat, Cast
 from django.db.models.functions.datetime import TruncHour
 from django.db.models import Func
+
+from django.db.models import Case, When
+
+from django.db.models import Avg
+
+from django.db import connection
 
 
 
@@ -32,7 +38,7 @@ class MetricaUsoMaquinaria(APIView):
         
 class MetricaTurnaroundPersonal(APIView):
         
-        #Metrica de numero de turnarounds que han participado
+        #Metrica de numero de turnarounds que ha participado el personal
         def get(self, request, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
@@ -57,7 +63,10 @@ class MetricaTurnaroundAerolineas(APIView):
                 return Response({'mensaje':'No hay aerolineas'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
         
-
+class TimeDiff(Func):
+    function = 'TIMEDIFF'
+    output_field = TimeField()        
+        
 class MetricaTurnaroundSLA(APIView):
         
         #Metrica de tiempo que han tardado los turnarounds
@@ -65,8 +74,7 @@ class MetricaTurnaroundSLA(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                turnarounds = turnaround.objects.extra(select={'tiempo': '(TIME_TO_SEC(TIMEDIFF(hora_fin, hora_inicio)) DIV 60)',}
-                                                       ).values('tiempo', 'id', 'fk_vuelo__numero_vuelo')
+                turnarounds = turnaround.objects.annotate(tiempo=TimeDiff(F('hora_fin'), F('hora_inicio'))).filter(tiempo__isnull=False).values('tiempo', 'id', 'fk_vuelo__numero_vuelo')
                 if turnarounds:
                     return Response( turnarounds, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
@@ -76,8 +84,8 @@ class MetricaTurnaroundSLA(APIView):
 
 class PorcentajeTurnaround(APIView):
 
+    #Porcentaje turnarounds por aerolinea
     def get(self, request, *args, **kwargs):
-    #Lista de usuarios
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
@@ -100,6 +108,7 @@ class DiffInMinutes(Func):
     
 class HoraInicio(APIView):
      
+     #Hora inicio tareas y subtareas por plantilla
      def get (self, request, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -115,7 +124,7 @@ class HoraInicio(APIView):
 
 class HoraInicioYFin(APIView):
     
-     
+    #Hora inicio y final tareas y subtareas por plantilla
      def get (self, request, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -127,3 +136,270 @@ class HoraInicioYFin(APIView):
             return Response(result, status=status.HTTP_200_OK)
 
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PorcentajePlantillas(APIView):
+
+    #Porcentaje de usos de plantillas
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            if request.method == 'GET':
+                plantillas = vuelo.objects.values('fk_plantilla__id','fk_plantilla__titulo').annotate(
+                            contador=Count('fk_plantilla__id'),
+                            porcentaje=ExpressionWrapper(
+                            Count('fk_plantilla__id') * 100 / vuelo.objects.count(),
+                            output_field=CharField()),
+                            percent=Concat('porcentaje', Value('%'), output_field=CharField()))
+                            
+                return Response( plantillas , status=status.HTTP_200_OK)
+            return Response({'mensaje':'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+def tiempo_transcurrido_horas(duracion):
+                segundos = duracion.total_seconds()
+                horas, segundos = divmod(segundos, 3600)
+                minutos, segundos = divmod(segundos, 60)
+                return '{:02d}:{:02d}:{:02d}'.format(int(horas), int(minutos), int(segundos))
+    
+
+class PorcentajeHora(APIView):
+
+    #Hora inicio tiempo promedio de subtareas 
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+
+            def obtener_tiempo_transcurrido(datos):
+                tiempo_transcurrido = datos.annotate(
+                    tiempo_transcurrido=ExpressionWrapper(
+                        F('hora_inicio') - F('fk_turnaround__hora_inicio'), output_field=DurationField()
+                    )
+                )
+                return tiempo_transcurrido
+
+            def obtener_promedio_tiempo_transcurrido(datos):
+                promedio_tiempo_transcurrido = datos.values('fk_subtarea_id','fk_subtarea__titulo','fk_subtarea__fk_tarea__titulo',
+                                                            'fk_subtarea__fk_tarea__fk_plantilla__titulo','fk_subtarea__fk_tarea__fk_plantilla__id',
+                                                            'fk_subtarea__fk_tipo_id').annotate(
+                    average_tiempo_transcurrido=Avg('tiempo_transcurrido')
+                )
+                return promedio_tiempo_transcurrido
+
+            datos = Hora.objects.values('hora_inicio', 'fk_turnaround__hora_inicio',"fk_subtarea_id",'fk_subtarea__fk_tarea__fk_plantilla__id','fk_subtarea__fk_tipo_id')
+            tiempo_transcurrido = obtener_tiempo_transcurrido(datos)
+            promedio_tiempo_transcurrido = obtener_promedio_tiempo_transcurrido(tiempo_transcurrido)
+
+            for dato in promedio_tiempo_transcurrido:
+                dato['average_tiempo_transcurrido'] = tiempo_transcurrido_horas(dato['average_tiempo_transcurrido'])
+
+            return Response(promedio_tiempo_transcurrido, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class PorcentajeHoraInicioFin(APIView):
+
+    #Hora inicio tiempo promedio de subtareas 
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+
+            def obtener_tiempo_transcurrido(datos):
+                tiempo_transcurrido = datos.annotate(
+                    tiempo_transcurrido=ExpressionWrapper(
+                        F('hora_fin') - F('hora_inicio'), output_field=DurationField()
+                    )
+                )
+                return tiempo_transcurrido
+
+            def obtener_promedio_tiempo_transcurrido(datos):
+                promedio_tiempo_transcurrido = datos.values('fk_subtarea_id','fk_subtarea__titulo','fk_subtarea__fk_tarea__titulo',
+                                                            'fk_subtarea__fk_tarea__fk_plantilla__titulo','fk_subtarea__fk_tarea__fk_plantilla__id',
+                                                            'fk_subtarea__fk_tipo_id').annotate(
+                    average_tiempo_transcurrido=Avg('tiempo_transcurrido')
+                )
+                return promedio_tiempo_transcurrido
+
+            datos = HoraInicioFin.objects.values('hora_inicio', 'hora_fin',"fk_subtarea_id","fk_turnaround__hora_inicio",'fk_subtarea__fk_tarea__fk_plantilla__id',
+                                                 'fk_subtarea__fk_tipo_id')
+            tiempo_transcurrido = obtener_tiempo_transcurrido(datos)
+            promedio_tiempo_transcurrido = obtener_promedio_tiempo_transcurrido(tiempo_transcurrido)
+
+            for dato in promedio_tiempo_transcurrido:
+                dato['average_tiempo_transcurrido'] = tiempo_transcurrido_horas(dato['average_tiempo_transcurrido'])
+
+            return Response(promedio_tiempo_transcurrido, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class NumeroDeVuelos(APIView):
+
+    #Porcentaje de usos de plantillas
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            if request.method == 'GET':
+                vuelos = vuelo.objects.filter(estado = "No ha llegado").count()
+                            
+                return Response( {"numero_servicios": vuelos} , status=status.HTTP_200_OK)
+            return Response({'mensaje':'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class NumeroDeServicios(APIView):
+
+    #Porcentaje de usos de plantillas
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            if request.method == 'GET':
+                servicios = vuelo.objects.values('tipo_servicio__nombre').annotate(contador=Count('id')).filter(contador__gt=0)
+                            
+                return Response( servicios , status=status.HTTP_200_OK)
+            return Response({'mensaje':'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class EstadisticaAerolinea(APIView):
+
+    #Hora inicio tiempo promedio de subtareas 
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+
+            def obtener_tiempo_transcurrido(datos):
+                tiempo_transcurrido = datos.annotate(
+                    tiempo_transcurrido=ExpressionWrapper(
+                        F('hora_fin') - F('hora_inicio'), output_field=DurationField()
+                    )
+                )
+                return tiempo_transcurrido
+
+            def obtener_promedio_tiempo_transcurrido(datos):
+                promedio_tiempo_transcurrido = datos.values('fk_vuelo__fk_aerolinea__nombre','fk_vuelo__tipo_servicio__nombre','fk_vuelo__tipo_servicio__id').annotate(
+                    average_tiempo_transcurrido=Avg('tiempo_transcurrido'), contador=Count('id')
+                ).filter(contador__gt=0)
+
+                return promedio_tiempo_transcurrido
+
+            datos = turnaround.objects.values('hora_inicio', 'hora_fin').filter(fk_vuelo__estado="Finalizado")
+            tiempo_transcurrido = obtener_tiempo_transcurrido(datos)
+            promedio_tiempo_transcurrido = obtener_promedio_tiempo_transcurrido(tiempo_transcurrido)
+
+            for dato in promedio_tiempo_transcurrido:
+                dato['average_tiempo_transcurrido'] = tiempo_transcurrido_horas(dato['average_tiempo_transcurrido'])
+
+            return Response(promedio_tiempo_transcurrido, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class EstadisticaServicios(APIView):
+
+    #Hora inicio tiempo promedio de subtareas 
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+
+            datos = vuelo.objects.values('tipo_servicio__nombre').annotate(aerolinea=Max('fk_aerolinea__nombre')).order_by('tipo_servicio__nombre')
+
+            return Response(datos, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class GraficaAerolineas(APIView):
+
+    #Hora inicio tiempo promedio de subtareas 
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+
+            resultados = []
+
+            # Obtener todas las aerolíneas
+            aerolineas = vuelo.objects.values('fk_aerolinea','fk_aerolinea__nombre').distinct()
+
+            # Iterar sobre cada aerolínea
+            for datos in aerolineas:
+                aerolinea_id = datos['fk_aerolinea']
+                aerolinea_nombre = datos['fk_aerolinea__nombre']
+
+                # Contadores para cada tipo de servicio
+                turnaround_entrante = 0
+                turnaround_saliente = 0
+                inbound = 0
+                outbound = 0
+
+                # Obtener todos los vuelos de la aerolínea
+                vuelos = vuelo.objects.filter(fk_aerolinea=aerolinea_id)
+
+                # Iterar sobre cada vuelo
+                for servicio in vuelos:
+                    # Verificar el tipo de servicio y actualizar el contador correspondiente
+                    if servicio.tipo_servicio.nombre == 'Turnaround entrante':
+                        turnaround_entrante += 1
+                    elif servicio.tipo_servicio.nombre == 'Turnaround saliente':
+                        turnaround_saliente += 1
+                    elif servicio.tipo_servicio.nombre == 'Inbound':
+                        inbound += 1
+                    elif servicio.tipo_servicio.nombre == 'Outbound':
+                        outbound += 1
+
+                # Agregar los resultados a la lista
+                resultados.append({
+                    'nombre_aerolinea': aerolinea_nombre,
+                    'turnaround_entrante': turnaround_entrante,
+                    'turnaround_saliente': turnaround_saliente,
+                    'inbound': inbound,
+                    'outbound': outbound
+                })
+
+            return Response(resultados, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class PorcentajeMaquinaria(APIView):
+    
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+                maquinarias = maquinaria_historial.objects.values('fk_maquinaria__fk_categoria__nombre').all()
+                categorias = maquinaria_historial.objects.values('fk_maquinaria__fk_categoria__nombre').distinct()
+                
+                porcentajes = []
+                for c in categorias:
+                    cantidad_usos = maquinarias.filter(fk_maquinaria__fk_categoria__nombre=c['fk_maquinaria__fk_categoria__nombre']).count()
+                    porcentaje = (cantidad_usos / maquinarias.count()) * 100
+                    porcentajes.append({'categoria': c['fk_maquinaria__fk_categoria__nombre'], 'porcentaje': porcentaje})
+                    
+                return Response(porcentajes, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
+    
+class EstadisticaMaquinaria(APIView):
+
+    #Hora inicio tiempo promedio de subtareas 
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+
+            datos = maquinaria_historial.objects.values('fk_maquinaria__fk_categoria__nombre').annotate(aerolinea=Max('fk_turnaround__fk_vuelo__fk_aerolinea__nombre'), 
+                                                                                                        maquinaria_max=Max('fk_maquinaria__identificador')).order_by('fk_maquinaria__fk_categoria__nombre')
+
+            return Response(datos, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    

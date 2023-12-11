@@ -38,7 +38,8 @@ class Login(ObtainAuthToken):
                 token = Token.objects.create(user = user)
                 return Response({
                     'token': token.key,
-                    'value': True
+                    'value': True,
+                    'username': user.username
                 })
             
         else:
