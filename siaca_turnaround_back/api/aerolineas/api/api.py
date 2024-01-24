@@ -3,11 +3,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import AerolineaSerializer
+from .serializer import AerolineaSerializer, PruebaSerializer
 from api.models import aerolinea
 from rest_framework import filters
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
+
 
 
 class Aerolinea(APIView):
@@ -74,3 +75,19 @@ class ModificarAerolinea(generics.RetrieveUpdateDestroyAPIView):
             return Response({'mensaje':'No se ha encontrado la aerolinea'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
+
+class Prueba(APIView):
+            
+    def post(self, request, *args, **kwargs):
+        
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                aerolineas_serializer = PruebaSerializer(data = request.data)
+                if aerolineas_serializer.is_valid():
+                    aerolineas_serializer.save()
+                    return Response(aerolineas_serializer.data, status=status.HTTP_201_CREATED)
+                
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+

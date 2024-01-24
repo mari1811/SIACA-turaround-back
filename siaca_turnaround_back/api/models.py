@@ -26,7 +26,7 @@ class maquinaria(models.Model):
     combustible=models.CharField(max_length=50)
     estado=models.BooleanField(null=True)
     fk_categoria=models.ForeignKey(categoria,blank=True,null=True,on_delete=models.CASCADE)
-    imagen=models.CharField(max_length=50, null=True)
+    imagen=models.ImageField(upload_to="maquinarias/", null=True, blank=True)
 
 class codigos_demora(models.Model):
     identificador=models.PositiveIntegerField()

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from .api import  Aerolinea, ModificarAerolinea
+from .api import  Aerolinea, ModificarAerolinea, Prueba
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -11,5 +11,6 @@ from rest_framework_simplejwt.views import (
 urlpatterns=[
 
     path('', Aerolinea.as_view(), name='lista_aerolineas'),
-    path('<int:pk>/', ModificarAerolinea.as_view(), name='modificar_aerolineas')
+    path('<int:pk>/', ModificarAerolinea.as_view(), name='modificar_aerolineas'),
+    path('prueba/', Prueba.as_view(), name='prueba'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

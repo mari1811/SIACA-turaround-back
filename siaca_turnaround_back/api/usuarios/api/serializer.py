@@ -108,6 +108,13 @@ class UsuarioTurnaroundSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class DepartamentoUsuarioListaSerializer(serializers.ModelSerializer):
+    fk_usuario = DatosListaSerializer()
+    class Meta:
+        model = usuario_turnaround
+        fields = '__all__'
+
+
 
 
 class EmailSerializer(serializers.Serializer):

@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import usuario_api_view, usuarios_detalles_view, datos_api_view, UserListView, registro_usuario, Lista, Prueba, Update, DeleteUser, EstadoUsuario, Solicitudes, Contador, UsuarioHistorial, MetricaTurnaroundPersonal, Departamento, Cargo
+from .api import usuario_api_view, usuarios_detalles_view, datos_api_view, UserListView, registro_usuario, Lista, Prueba, Update, DeleteUser, EstadoUsuario, Solicitudes, Contador, UsuarioHistorial, MetricaTurnaroundPersonal, Departamento, Cargo, UsuarioTurnaround
 from api.usuarios.views import Login, Logout, PasswordReset, ResetPasswordAPI
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -35,4 +35,6 @@ urlpatterns=[
     path('reserva/<str:fecha>/<str:horaI>/<str:horaF>/', UsuarioHistorial.as_view(), name='uausrio_reserva'),
     path('reserva/', UsuarioHistorial.as_view(), name='usuario_reserva_crear'),
     path('metrica/turnaround/', MetricaTurnaroundPersonal.as_view(), name='metrica_turnaround'),
+    path('lista/<int:pk>/', UsuarioTurnaround.as_view(), name='usuario_turnaround'),
+
 ]

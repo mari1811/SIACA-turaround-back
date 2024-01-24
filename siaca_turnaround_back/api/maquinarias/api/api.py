@@ -193,7 +193,7 @@ class MaquinariaTurnaround(APIView):
                 if maquinarias:
                     maquinaria_serializer = MaquinariaCategoriaSerializer(maquinarias,  many = True)
                     return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
-                return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje':'No hay maquinarias asignadas para este turnaround'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
      
 

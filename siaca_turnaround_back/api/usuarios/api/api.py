@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer, CargoSerializer, DepartamentoSerializer
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer, CargoSerializer, DepartamentoSerializer, DepartamentoUsuarioListaSerializer
 from api.models import usuario, usuario_turnaround, departamento, cargo
 from django.contrib.auth.models import User
 from rest_framework import filters
@@ -244,4 +244,19 @@ class MetricaTurnaroundPersonal(APIView):
                 if usuarios:
                     return Response(contador , status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class UsuarioTurnaround(APIView):
+        
+        #Buscar maquinarias por categoria
+        def get(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                usuarios = usuario_turnaround.objects.filter(fk_turnaround__id = pk).order_by("fk_usuario_id").all()
+                if usuarios:
+                    usuario_serializer = DepartamentoUsuarioListaSerializer(usuarios,  many = True)
+                    return Response(usuario_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No hay maquinarias asignadas para este turnaround'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
