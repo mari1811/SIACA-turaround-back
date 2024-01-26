@@ -62,7 +62,8 @@ class MetricaTurnaroundAerolineas(APIView):
                     return Response( aerolineas, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay aerolineas'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+#Clase que define variables tipo hora    
 class TimeDiff(Func):
     function = 'TIMEDIFF'
     output_field = TimeField()        
@@ -101,6 +102,7 @@ class PorcentajeTurnaround(APIView):
             return Response({'mensaje':'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
+#Clase que convierte minutos en horas
 class DiffInMinutes(Func):
     function = 'TIMESTAMPDIFF'
     template = '%(function)s(MINUTE, %(expressions)s), TIMESTAMPDIFF(SECOND, %(expressions)s)'
@@ -239,7 +241,7 @@ class PorcentajeHoraInicioFin(APIView):
 
 class NumeroDeVuelos(APIView):
 
-    #Porcentaje de usos de plantillas
+    #Numero de vuelos realizados 
     def get(self, request, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -254,7 +256,7 @@ class NumeroDeVuelos(APIView):
 
 class NumeroDeServicios(APIView):
 
-    #Porcentaje de usos de plantillas
+    #Numero de servicios realizados por cada tipo de servicio
     def get(self, request, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -370,6 +372,7 @@ class GraficaAerolineas(APIView):
     
 class PorcentajeMaquinaria(APIView):
     
+    #Porcentaje de uso de las maquinarias
     def get(self, request, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -390,7 +393,7 @@ class PorcentajeMaquinaria(APIView):
     
 class EstadisticaMaquinaria(APIView):
 
-    #Hora inicio tiempo promedio de subtareas 
+    #Estadisticas de numero de usos de maquinarias
     def get(self, request, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key=token).first()

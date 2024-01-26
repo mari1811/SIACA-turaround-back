@@ -3,7 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, TareaVistaSerializer, SubareaVistaSerializer, CantidadSerializer, CategoriaSerializer, PlantillaMaquinariaSerializer, TipoSerializer, PlantillaTareaSubtareaSerializer
+from .serializer import PlantillaSerializer, TareaSerializer, SubtareaSerializer, TareaVistaSerializer, SubareaVistaSerializer, CantidadSerializer, CategoriaSerializer
+from .serializer import PlantillaMaquinariaSerializer, TipoSerializer, PlantillaTareaSubtareaSerializer
 from api.models import plantilla, tarea, subtarea, cantidad_categoria, categoria, tipo, tipo_subtarea, Hora
 from rest_framework import filters
 from rest_framework import generics
@@ -75,6 +76,7 @@ class Subtarea(APIView):
     
 class Maquinaria(APIView):
     
+    #Agregar la cantidad de maquinarias 
     def post(self, request, *args, **kwargs):
         
         token = request.GET.get('token')
@@ -90,7 +92,7 @@ class Maquinaria(APIView):
 
 class Categoria(APIView):
 
-
+    #Lista de categorias
     def get(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -102,7 +104,7 @@ class Categoria(APIView):
 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
-    
+    #Agregar nueva categoria
     def post(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -117,7 +119,7 @@ class Categoria(APIView):
     
 class Tipo(APIView):
 
-
+    #Lista de tipos de subtareas
     def get(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -144,7 +146,7 @@ class VistaPlantilla(APIView):
             return Response({'mensaje':'No se ha encontrado la plantilla'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
-    #Buscar una plantilla con sus detalles 
+    #Eliminar plantilla
     def delete(self, request, pk=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -160,6 +162,7 @@ class VistaPlantilla(APIView):
 
 class VistaSubtarea(APIView):
      
+     #Plantilla con todas sus tareas y subtareas por ID
      def get(self, request, pk=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -174,6 +177,7 @@ class VistaSubtarea(APIView):
 
 class VistaMaquinaria(APIView):
      
+     #Cantidad de maquinarias necesarias por plantilla especifica por ID
     def get(self, request, pk=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -188,6 +192,7 @@ class VistaMaquinaria(APIView):
 
 class ContadorMaquinaria(APIView):
      
+     #Contador del numeor de categorias
      def get (self, request, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -200,6 +205,7 @@ class ContadorMaquinaria(APIView):
 
 class Plantillas(APIView):
      
+     #Lista de todas las plantillas con todas sus tareas y subtareas
      def get (self, request, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()

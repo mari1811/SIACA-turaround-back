@@ -2,14 +2,9 @@ from rest_framework import serializers
 from api.models import aerolinea
 from django.contrib.auth import authenticate
 
-
+#Serializador de todos los datos de la aerolinea
 class AerolineaSerializer(serializers.ModelSerializer):
     class Meta:
         model = aerolinea
-        fields = ("id","nombre","correo","telefono","telefono_secundario","correo_secundario","pais","ciudad","codigo","imagen")
+        fields = '__all__'
 
-
-class PruebaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = aerolinea
-        fields = ("imagen","nombre")

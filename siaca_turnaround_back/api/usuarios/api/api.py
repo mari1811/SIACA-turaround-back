@@ -3,7 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUserSeralizer, UpdateUsuarioSerializer, UpdateSeralizer, EstadoUsuarioSerializer, IDSolicitudes, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer, CargoSerializer, DepartamentoSerializer, DepartamentoUsuarioListaSerializer
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUsuarioSerializer, UpdateSeralizer
+from .serializer import EstadoUsuarioSerializer, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer, CargoSerializer, DepartamentoSerializer, DepartamentoUsuarioListaSerializer
 from api.models import usuario, usuario_turnaround, departamento, cargo
 from django.contrib.auth.models import User
 from rest_framework import filters
@@ -12,7 +13,6 @@ from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 from django.db.models import Count, Sum, F, Value, Func, CharField
 from django.db.models.functions import Concat
-
 
 
 
@@ -34,8 +34,10 @@ def usuario_api_view(request):
         
         return Response(usuarios_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
 class Departamento(APIView):
 
+    #Lista de departamentos
     def get(self, request, *args, **kwargs):
         
             if request.method == 'GET':
@@ -45,6 +47,7 @@ class Departamento(APIView):
             
 class Cargo(APIView):
 
+    #Lista de cargos 
     def get(self, request, *args, **kwargs):
         
             if request.method == 'GET':
@@ -52,37 +55,10 @@ class Cargo(APIView):
                 datos_serializer = CargoSerializer(datos, many = True)
                 return Response (datos_serializer.data, status=status.HTTP_200_OK)
     
-@api_view(['GET','PUT','DELETE'])
-def usuarios_detalles_view(request, pk=None):
-    #Consulta de usuario
-    user = User.objects.filter(id = pk).first()
-
-    #Validación 
-    if user:
-
-        #Buscar un usuario
-        if request.method == 'GET':
-            usuario_serializer = UsuarioSerializer(user)
-            return Response(usuario_serializer.data, status=status.HTTP_200_OK)
-        
-        #Actualizar datos de un usuario
-        elif request.method == 'PUT':
-            usuario_serializer = UpdateUserSeralizer(user, data=request.data)
-            if usuario_serializer.is_valid():
-                usuario_serializer.save()
-                return Response(usuario_serializer.data, status=status.HTTP_200_OK)
-            return Response(usuario_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        #Eliminar un usuario
-        elif request.method == 'DELETE':
-            user.delete()
-            return Response({'mensaje':'Usuario eliminado'}, status=status.HTTP_200_OK)
-
-    #No existe el usuario   
-    return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
 
 class Update(APIView):
 
+    #Editar usuario
     def patch(self, request, pk =None, *args, **kwargs):
 
         user = User.objects.filter(id = pk).first()
@@ -92,15 +68,6 @@ class Update(APIView):
             return Response(usuario_serializer.data, status=status.HTTP_200_OK)
         return Response(usuario_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['GET','POST', 'PUT'])
-def datos_api_view(request, pk=None):
-
-    #Lista de uausarios
-    if request.method == 'GET':
-        datos = usuario.objects.filter(id = pk).first()
-        datos_serializer = DatosListaSerializer(datos)
-        return Response (datos_serializer.data, status=status.HTTP_200_OK)
 
 class Lista(APIView):
 
@@ -127,6 +94,7 @@ def registro_usuario(request):
         return Response(datos_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+#Buscar usuario por username 
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = IDSerialier
@@ -145,6 +113,7 @@ class Prueba(APIView):
             
 class DeleteUser(APIView):
 
+    #Eliminar usuario
     def delete(self, request, pk =None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -159,7 +128,7 @@ class DeleteUser(APIView):
 
 class EstadoUsuario(APIView):
      
-     #Modificar estado de maquinaria
+     #MCambiar estado de usuario (activo/no activo)
         def patch(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
@@ -176,8 +145,8 @@ class EstadoUsuario(APIView):
 
 class Solicitudes(APIView):
 
+    #Lista de solicitudes de usuarios
     def get(self, request, *args, **kwargs):
-    #Lista de solicitudes
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
@@ -190,7 +159,7 @@ class Solicitudes(APIView):
 class Contador(APIView):
 
     def get(self, request, *args, **kwargs):
-    #Contador de solicitudes 
+    #Contador de solicitudes de usuario
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
@@ -201,7 +170,7 @@ class Contador(APIView):
     
 class UsuarioHistorial(APIView):
      
-    #Asignar hora inicio y fin     
+    #Asignar personal a turnaround   
     def post(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -215,7 +184,7 @@ class UsuarioHistorial(APIView):
                 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
-    #Buscar maquinarias por categoria
+    #Lista de perosnal disponible
     def get(self, request, fecha=None, horaI=None, horaF=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -234,7 +203,7 @@ class UsuarioHistorial(APIView):
 
 class MetricaTurnaroundPersonal(APIView):
         
-        #Metrica de numeor de usos de maquinarias 
+        #Metrica de personal
         def get(self, request, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
@@ -249,7 +218,7 @@ class MetricaTurnaroundPersonal(APIView):
 
 class UsuarioTurnaround(APIView):
         
-        #Buscar maquinarias por categoria
+        #Lista de personal asignado a turnaround
         def get(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()

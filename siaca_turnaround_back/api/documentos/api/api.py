@@ -42,7 +42,7 @@ class Documento(APIView):
 
 class ComentarioTurnaround(APIView):
 
-        #Crear un Turnaround      
+        #Agregar comentario a una subtarea del turaround
         def post(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -60,7 +60,7 @@ class ComentarioTurnaround(APIView):
 
 class HoraInicioTurnaround(APIView):
 
-        #Crear un Turnaround      
+        #Agregar hora de inicio a una subtarea del turnaround
         def post(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -78,7 +78,7 @@ class HoraInicioTurnaround(APIView):
 
 class HoraInicioFinTurnaround(APIView):
 
-        #Crear un Turnaround      
+        #Agregar hora de inicio y fin a una subtarea del turnaround 
         def post(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -95,7 +95,7 @@ class HoraInicioFinTurnaround(APIView):
         
 class ImagenTurnaround(APIView):
 
-        #Crear un Turnaround      
+        #Agregar hora una imagen a una subtarea del turnaround      
         def post(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -113,7 +113,7 @@ class ImagenTurnaround(APIView):
 
 class TareasTurnaround(APIView):
 
-    #Lista de Docuemntos
+    #Turnaround por ID con la infomación del vuelo y la plantilla asociada
     def get(self, request, pk=None, *args, **kwargs):
         
             token = request.GET.get('token')

@@ -96,6 +96,7 @@ class VueloDetalle(APIView):
 
 class BuscarVueloFecha(APIView):
         
+        #Buscar vuelos de una fecha específica
         def get(self, request, fecha=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
@@ -135,7 +136,7 @@ class TipoVuelo(APIView):
 
 class TipoServicio(APIView):
 
-    #Lista tipo de vuelo
+    #Lista tipo de servicio
     def get(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -218,6 +219,7 @@ class REG(APIView):
 
 class BuscarVueloAerolinea(APIView):
         
+        #Buscar los vuelos por ID de aerolinea
         def get(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()

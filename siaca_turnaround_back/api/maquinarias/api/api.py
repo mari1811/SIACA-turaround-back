@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import MaquinariaSerializer, MaquinariaModificarSerializer, MaquinariaDatosSerializer, MaquinariaEstadoSerializer, ListaCategoriaSerializer, ModificarSerializer, MaquinariaHistorialSerializer, MaquinariaCategoriaSerializer
+from .serializer import MaquinariaSerializer, MaquinariaDatosSerializer, MaquinariaEstadoSerializer, ListaCategoriaSerializer, ModificarSerializer, MaquinariaHistorialSerializer, MaquinariaCategoriaSerializer
 from api.models import maquinaria, categoria, maquinaria_historial
 from rest_framework import filters
 from rest_framework import generics
@@ -25,6 +25,7 @@ class Maquiarias(APIView):
                 return Response (maquinaria_serializer.data, status=status.HTTP_200_OK)
 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
     #Crear una Maquinaria      
     def post(self, request, *args, **kwargs):
         
@@ -42,7 +43,7 @@ class Maquiarias(APIView):
 
 class BuscarCategoria(APIView):
         
-        #Buscar maquinarias por categoria
+        #Buscar maquinarias asociadas a la categoria por ID 
         def get(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
@@ -56,7 +57,7 @@ class BuscarCategoria(APIView):
         
 class ListaCategoria(APIView):
 
-    #Lista de Maquinarias
+    #Lista de Categorias
     def get(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -100,7 +101,7 @@ class ModificarMaquinaria(generics.RetrieveUpdateDestroyAPIView):
     
 class EstadoMaquinaria(APIView):
      
-     #Modificar estado de maquinaria
+     #Cambiar estado de maquinaria
         def patch(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
@@ -123,14 +124,14 @@ class EstadoMaquinaria(APIView):
 
 class BuscarMaquinaria(APIView):
         
-        #Buscar maquinarias por categoria
+        #Buscar maquinaria por ID
         def get(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
                 maquinarias = maquinaria.objects.filter(id = pk).first()
                 if maquinarias:
-                    maquinaria_serializer = MaquinariaModificarSerializer(maquinarias)
+                    maquinaria_serializer = MaquinariaDatosSerializer(maquinarias)
                     return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
@@ -138,7 +139,7 @@ class BuscarMaquinaria(APIView):
 
 class MaquinariaHistorial(APIView):
      
-    #Asignar hora inicio y fin     
+    #Asignar maquinaria a un turnaround  
     def post(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -152,7 +153,7 @@ class MaquinariaHistorial(APIView):
                 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
-    #Buscar maquinarias por categoria
+    #Lista de maquinarias disponiles en la fecha y rango de hora
     def get(self, request, fecha=None, horaI=None, horaF=None, *args, **kwargs):
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
@@ -171,7 +172,7 @@ class MaquinariaHistorial(APIView):
 
 class MetricaUsoMaquinaria(APIView):
         
-        #Metrica de numeor de usos de maquinarias 
+        #Metrica de numero de usos de maquinarias 
         def get(self, request, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
@@ -184,7 +185,7 @@ class MetricaUsoMaquinaria(APIView):
      
 class MaquinariaTurnaround(APIView):
         
-        #Buscar maquinarias por categoria
+        #Lista de maquinarias asociadas a un turnaround por ID de turaround
         def get(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()

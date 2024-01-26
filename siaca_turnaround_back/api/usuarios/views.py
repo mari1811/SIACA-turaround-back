@@ -11,10 +11,6 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-
-
-
-
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -22,7 +18,10 @@ from django.utils.http import urlsafe_base64_encode
 
 
 
+
 class Login(ObtainAuthToken):
+
+    #Inicio de sesión
     def post(self, request, *args, **kwargs):
         login_serializer = self.serializer_class(data = request.data, context = {'request':request})
         if login_serializer.is_valid():
@@ -51,8 +50,10 @@ class Login(ObtainAuthToken):
                 'value': False}, 
                 status = status.HTTP_400_BAD_REQUEST)
 
+
 class Logout(APIView):
 
+    #Cerrar sesión
     def get(self, request, *args, **kwargs):
         
             token = request.GET.get('token')
@@ -77,7 +78,7 @@ class Logout(APIView):
     
 
 
-
+#Enviar el link al correo para recuperar clave
 class PasswordReset(generics.GenericAPIView):
     """
     Request for Password Reset Link.
@@ -127,6 +128,7 @@ class PasswordReset(generics.GenericAPIView):
             )
 
 
+#Cambio de clave 
 class ResetPasswordAPI(generics.GenericAPIView):
     """
     Verify and Reset Password Token View.
