@@ -134,7 +134,7 @@ class usuario_turnaround(models.Model):
 class Imagen(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
     fk_subtarea=models.ForeignKey(subtarea,blank=True,null=True,on_delete=models.CASCADE)
-    link=models.CharField(blank=True,null=True,max_length=200)
+    imagen=models.ImageField(upload_to="turnaround/", null=True, blank=True)
 
 class Hora(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)

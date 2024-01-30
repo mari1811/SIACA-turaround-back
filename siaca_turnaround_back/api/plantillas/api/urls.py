@@ -32,7 +32,7 @@ urlpatterns=[
     #GET: Tareas de una plantilla especifica por ID , DELETE: Eliminar plantilla espeficica por ID http://127.0.0.1:8000/plantillas/vista/<ID>/?token=
     path('vista/<int:pk>/', VistaPlantilla.as_view(), name='vista'),
 
-    #GET: Todas las subtareas y tareas de una plantilla especifica por ID http://127.0.0.1:8000/plantillas/subtarea/7/?token=
+    #GET: Todas las subtareas y tareas de una plantilla especifica por ID http://127.0.0.1:8000/plantillas/subtarea/<ID>/?token=
     path('subtarea/<int:pk>/', VistaSubtarea.as_view(), name='subtarea'),
 
     #GET: Contador de categorias de maquinarias http://127.0.0.1:8000/plantillas/contador/?token=

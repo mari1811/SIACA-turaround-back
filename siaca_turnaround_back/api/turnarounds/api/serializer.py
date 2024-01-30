@@ -31,7 +31,7 @@ class CodigosDemoraSerializer(serializers.ModelSerializer):
 class VueloSerializer(serializers.ModelSerializer):
     class Meta:
         model = vuelo
-        fields = ('numero_vuelo',)   
+        fields = '__all__'  
 
 #Serializador lista de ciudades información completa
 class CiudadDetalleSerializer(serializers.ModelSerializer):
@@ -73,7 +73,7 @@ class VueloDetalleSerializer(serializers.ModelSerializer):
 #Serializador turnaround con codigo de demora e información completa del vuelo
 class TurnaroundDetallesSerializer(serializers.ModelSerializer):
     fk_codigos_demora = CodigosDemoraSerializer()
-    fk_vuelo = VueloSerializer()
+    fk_vuelo = VueloDetalleSerializer()
     class Meta:
         model = turnaround
         fields = '__all__'

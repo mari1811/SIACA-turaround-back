@@ -32,9 +32,16 @@ class TareaVistaSerializer(serializers.ModelSerializer):
         model = tarea
         fields = '__all__'
 
+#Serializador tipo de subtarea
+class TipoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = tipo
+        fields = '__all__'
+        
 #Serializador subtareas con sus tareas y plantillas asociadas
 class SubareaVistaSerializer(serializers.ModelSerializer):
     fk_tarea = TareaVistaSerializer()
+    fk_tipo = TipoSerializer()
     class Meta:
         model = subtarea
         fields = '__all__'
@@ -51,11 +58,6 @@ class CantidadSerializer(serializers.ModelSerializer):
         model = cantidad_categoria
         fields = '__all__'
 
-#Serializador tipo de subtarea
-class TipoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = tipo
-        fields = '__all__'
 
 #Serializador plantillas con la cantidad de maquinarias necesarias 
 class PlantillaMaquinariaSerializer(serializers.ModelSerializer):
