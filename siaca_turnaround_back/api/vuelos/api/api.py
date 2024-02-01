@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import VueloSerializer, ListaVuelosSerializer, CiudadesSerializer, TipoVueloSerializer, TipoServicioSerializer, REGSerializer
+from .serializer import VueloSerializer, ListaVuelosSerializer, CiudadesSerializer, TipoVueloSerializer, TipoServicioSerializer, REGSerializer, EstadoSerializer
 from api.models import vuelo, ciudades, tipo_vuelo, tipo_servicio
 from rest_framework import filters
 from rest_framework import generics
@@ -229,4 +229,35 @@ class BuscarVueloAerolinea(APIView):
                     vuelo_serializer = ListaVuelosSerializer(fly, many = True)
                     return Response(vuelo_serializer.data, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay vuelos en esta aerolinea'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class EstadoVueloEnProceso(APIView):
+     
+     #Cambiar estado de maquinaria
+        def patch(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                flight = vuelo.objects.filter(id = pk).first()
+                flight_serializer = EstadoSerializer(flight, data={"estado": "En proceso"})
+                if flight_serializer.is_valid():
+                    flight_serializer.save()
+                    return Response(flight_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No se ha encontrado el vuelo'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class EstadoVueloFinalizado(APIView):
+     
+     #Cambiar estado de maquinaria
+        def patch(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                flight = vuelo.objects.filter(id = pk).first()
+                flight_serializer = EstadoSerializer(flight, data={"estado": "Finalizado"})
+                if flight_serializer.is_valid():
+                    flight_serializer.save()
+                    return Response(flight_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No se ha encontrado el vuelo'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

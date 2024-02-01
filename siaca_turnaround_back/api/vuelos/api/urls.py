@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import  Vuelo, ModificarVuelo, BuscarVueloFecha, VueloDetalle, Ciudades, TipoVuelo, TipoServicio, ModificarCiudades, REG, BuscarVueloAerolinea
+from .api import  Vuelo, ModificarVuelo, BuscarVueloFecha, VueloDetalle, Ciudades, TipoVuelo, TipoServicio, ModificarCiudades, REG, BuscarVueloAerolinea, EstadoVueloEnProceso, EstadoVueloFinalizado
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -43,4 +43,10 @@ urlpatterns=[
 
     #GET: Lista de vuelos asociados a una aerolinea http://127.0.0.1:8000/vuelos/buscar-aerolinea/<ID>/?token=
     path('buscar-aerolinea/<int:pk>/', BuscarVueloAerolinea.as_view(), name= 'buscar_aerolinea'),
+
+    #PATCH: Cambia el estado del vuelo a "En proceso"
+    path('estado-proceso/<int:pk>/', EstadoVueloEnProceso.as_view(), name= 'estado_proceso'),
+
+    #PATCH: Cambia el estado del vuelo a "Finalizado"
+    path('estado-finalizado/<int:pk>/', EstadoVueloFinalizado.as_view(), name= 'estado_finalizado'),
 ]

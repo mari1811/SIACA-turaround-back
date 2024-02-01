@@ -10,6 +10,11 @@ class VueloSerializer(serializers.ModelSerializer):
         model = vuelo
         fields = '__all__'
 
+class EstadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = vuelo
+        fields = ('estado',)
+
 #Serializador nombre y ID de aerolinea
 class AerolineaSerializer(serializers.ModelSerializer):
     class Meta:
