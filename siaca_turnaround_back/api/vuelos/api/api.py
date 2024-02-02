@@ -255,7 +255,7 @@ class EstadoVueloFinalizado(APIView):
             token = Token.objects.filter(key = token).first()
             if token:
                 flight = vuelo.objects.filter(id = pk).first()
-                flight_serializer = EstadoSerializer(flight, data={"estado": "Finalizado"})
+                flight_serializer = EstadoSerializer(flight, data={"estado": "Atendido"})
                 if flight_serializer.is_valid():
                     flight_serializer.save()
                     return Response(flight_serializer.data, status=status.HTTP_200_OK)
