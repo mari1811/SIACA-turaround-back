@@ -13,6 +13,8 @@ from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 from django.db.models import Count, Sum, F, Value, Func, CharField
 from django.db.models.functions import Concat
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 
 
 
@@ -30,6 +32,15 @@ def usuario_api_view(request):
         usuarios_serializer = UsuarioSerializer(data = request.data)
         if usuarios_serializer.is_valid():
             usuarios_serializer.save()
+            #Envía un correo al administradore para informar que hay nuevas solicitudes de usuario
+            msg = EmailMultiAlternatives(
+            'Nueva solicitud de usuario',
+            'Tiene una nueva solicitud de usuario en el sistema de SIACA\n',
+            settings.EMAIL_HOST_USER,
+            #Correo del administrador
+            ["."]
+        )
+            msg.send()
             return Response(usuarios_serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(usuarios_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -121,6 +132,14 @@ class DeleteUser(APIView):
             user = User.objects.filter(id = pk).first()
             if user:
                 user.delete()
+                #Envía un correo al usuario para informar que su usuario fue rechazado o eliminar 
+                msg = EmailMultiAlternatives(
+                'Solicitud de usuario eliminado',
+                'Su usuario ha sido RECHAZADO o ELIMINADO del sistema de SIACA, comuniquese con el administrador para solucionar el problema\n',
+                settings.EMAIL_HOST_USER,
+                [user.username]
+                )
+                msg.send()
                 return Response({'mensaje':'Usuario eliminada'}, status=status.HTTP_200_OK)
             return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
@@ -138,6 +157,14 @@ class EstadoUsuario(APIView):
                     usuario_serializer = EstadoUsuarioSerializer(user, data={"is_active": True})
                     if usuario_serializer.is_valid():
                         usuario_serializer.save()
+                        #Envía un correo al usuario para informar que su usuario fue acepptado
+                        msg = EmailMultiAlternatives(
+                        'Solicitud de usuario aceptada',
+                        'Su usuario ya esta ACTIVO, puede ingresar al sistema de SIACA\n',
+                        settings.EMAIL_HOST_USER,
+                        [user.username]
+                        )
+                        msg.send()
                         return Response(usuario_serializer.data, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
