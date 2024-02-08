@@ -269,6 +269,14 @@ class NumeroDeServicios(APIView):
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
 
+def time_hours(duracion):
+    if duracion is None:
+        return '00:00:00'
+    segundos = duracion.total_seconds()
+    horas, segundos = divmod(segundos, 3600)
+    minutos, segundos = divmod(segundos, 60)
+    return '{:02d}:{:02d}:{:02d}'.format(int(horas), int(minutos), int(segundos))
+
 class EstadisticaAerolinea(APIView):
 
     #Hora inicio tiempo promedio de subtareas 
@@ -297,7 +305,7 @@ class EstadisticaAerolinea(APIView):
             promedio_tiempo_transcurrido = obtener_promedio_tiempo_transcurrido(tiempo_transcurrido)
 
             for dato in promedio_tiempo_transcurrido:
-                dato['average_tiempo_transcurrido'] = tiempo_transcurrido_horas(dato['average_tiempo_transcurrido'])
+                dato['average_tiempo_transcurrido'] = time_hours(dato['average_tiempo_transcurrido'])
 
             return Response(promedio_tiempo_transcurrido, status=status.HTTP_200_OK)
 
