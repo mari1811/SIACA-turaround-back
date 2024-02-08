@@ -43,7 +43,7 @@ class MetricaTurnaroundPersonal(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                usuarios = usuario_turnaround.objects.values( 'fk_usuario__id','fk_usuario__fk_departamento__nombre')
+                usuarios = usuario_turnaround.objects.values( 'fk_usuario__id','fk_usuario__fk_departamento__nombre','fk_usuario__fk_cargo__nombre')
                 contador = usuarios.annotate(contador=Count('fk_usuario__id')).filter(contador__gt=0).annotate(full_name=Concat('fk_usuario__fk_user__first_name', Value(' '), 'fk_usuario__fk_user__last_name',  output_field=CharField()))
                 if usuarios:
                     return Response(contador , status=status.HTTP_200_OK)
@@ -393,6 +393,27 @@ class PorcentajeMaquinaria(APIView):
                     cantidad_usos = maquinarias.filter(fk_maquinaria__fk_categoria__nombre=c['fk_maquinaria__fk_categoria__nombre']).count()
                     porcentaje = (cantidad_usos / maquinarias.count()) * 100
                     porcentajes.append({'categoria': c['fk_maquinaria__fk_categoria__nombre'], 'porcentaje': porcentaje})
+                    
+                return Response(porcentajes, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class PorcentajeDepartamentos(APIView):
+    
+    #Porcentaje de uso de las maquinarias
+    def get(self, request, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+                personal = usuario_turnaround.objects.values('fk_usuario__fk_departamento__nombre').all()
+                departamentos = usuario_turnaround.objects.values('fk_usuario__fk_departamento__nombre').distinct()
+                
+                porcentajes = []
+                for d in departamentos:
+                    cantidad_usos = personal.filter(fk_usuario__fk_departamento__nombre=d['fk_usuario__fk_departamento__nombre']).count()
+                    porcentaje = (cantidad_usos / personal.count()) * 100
+                    porcentajes.append({'departamentos': d['fk_usuario__fk_departamento__nombre'], 'porcentaje': porcentaje})
                     
                 return Response(porcentajes, status=status.HTTP_200_OK)
 

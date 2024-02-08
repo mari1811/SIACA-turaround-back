@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import MetricaUsoMaquinaria, MetricaTurnaroundPersonal, MetricaTurnaroundAerolineas, MetricaTurnaroundSLA, NumeroDeServicios, EstadisticaServicios, GraficaAerolineas
+from .api import MetricaUsoMaquinaria, MetricaTurnaroundPersonal, MetricaTurnaroundAerolineas, MetricaTurnaroundSLA, NumeroDeServicios, EstadisticaServicios, GraficaAerolineas,PorcentajeDepartamentos
 from .api import NumeroDeVuelos, PorcentajeTurnaround, HoraInicio, HoraInicioYFin, PorcentajePlantillas, PorcentajeHora, PorcentajeHoraInicioFin, EstadisticaAerolinea, PorcentajeMaquinaria
 from .api import EstadisticaMaquinaria
 from rest_framework_simplejwt.views import (
@@ -56,6 +56,9 @@ urlpatterns=[
 
     #GET: Porentaje de uso por categoria de maquinarias http://127.0.0.1:8000/metricas/porcentaje-maquinaria/?token=
     path('porcentaje-maquinaria/', PorcentajeMaquinaria.as_view(), name='porcentaje_maquinaria'),
+
+    #GET: Porcentaje de participación por departamentos en los turnarounds http://127.0.0.1:8000/metricas/porcentaje-personal/?token=
+    path('porcentaje-personal/', PorcentajeDepartamentos.as_view(), name='porcentaje_departementos'),
 
     #GET: Estadisticas de uso de maquinaria de las aerolineas http://127.0.0.1:8000/metricas/estadistica-maquinaria/?token=
     path('estadistica-maquinaria/', EstadisticaMaquinaria.as_view(), name='estadistica_maquinaria'),
