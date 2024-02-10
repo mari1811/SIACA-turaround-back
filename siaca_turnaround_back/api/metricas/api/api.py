@@ -185,12 +185,12 @@ class PorcentajeHora(APIView):
             def obtener_promedio_tiempo_transcurrido(datos):
                 promedio_tiempo_transcurrido = datos.values('fk_subtarea_id','fk_subtarea__titulo','fk_subtarea__fk_tarea__titulo',
                                                             'fk_subtarea__fk_tarea__fk_plantilla__titulo','fk_subtarea__fk_tarea__fk_plantilla__id',
-                                                            'fk_subtarea__fk_tipo_id').annotate(
+                                                            'fk_subtarea__fk_tipo_id','fk_turnaround__fk_vuelo__fk_aerolinea__nombre').annotate(
                     average_tiempo_transcurrido=Avg('tiempo_transcurrido')
                 )
                 return promedio_tiempo_transcurrido
 
-            datos = Hora.objects.values('hora_inicio', 'fk_turnaround__hora_inicio',"fk_subtarea_id",'fk_subtarea__fk_tarea__fk_plantilla__id','fk_subtarea__fk_tipo_id')
+            datos = Hora.objects.values('hora_inicio', 'fk_turnaround__hora_inicio',"fk_subtarea_id",'fk_subtarea__fk_tarea__fk_plantilla__id','fk_subtarea__fk_tipo_id','fk_turnaround__fk_vuelo__fk_aerolinea__nombre')
             tiempo_transcurrido = obtener_tiempo_transcurrido(datos)
             promedio_tiempo_transcurrido = obtener_promedio_tiempo_transcurrido(tiempo_transcurrido)
 
@@ -221,13 +221,13 @@ class PorcentajeHoraInicioFin(APIView):
             def obtener_promedio_tiempo_transcurrido(datos):
                 promedio_tiempo_transcurrido = datos.values('fk_subtarea_id','fk_subtarea__titulo','fk_subtarea__fk_tarea__titulo',
                                                             'fk_subtarea__fk_tarea__fk_plantilla__titulo','fk_subtarea__fk_tarea__fk_plantilla__id',
-                                                            'fk_subtarea__fk_tipo_id').annotate(
+                                                            'fk_subtarea__fk_tipo_id', 'fk_turnaround__fk_vuelo__fk_aerolinea__nombre').annotate(
                     average_tiempo_transcurrido=Avg('tiempo_transcurrido')
                 )
                 return promedio_tiempo_transcurrido
 
             datos = HoraInicioFin.objects.values('hora_inicio', 'hora_fin',"fk_subtarea_id","fk_turnaround__hora_inicio",'fk_subtarea__fk_tarea__fk_plantilla__id',
-                                                 'fk_subtarea__fk_tipo_id')
+                                                 'fk_subtarea__fk_tipo_id', 'fk_turnaround__fk_vuelo__fk_aerolinea__nombre')
             tiempo_transcurrido = obtener_tiempo_transcurrido(datos)
             promedio_tiempo_transcurrido = obtener_promedio_tiempo_transcurrido(tiempo_transcurrido)
 
