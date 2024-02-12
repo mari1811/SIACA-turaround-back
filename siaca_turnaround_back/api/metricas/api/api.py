@@ -20,6 +20,12 @@ from django.db.models import Case, When
 from django.db.models import Avg
 
 from django.db import connection
+import json
+from django.core.serializers import serialize
+from django.http import JsonResponse
+from django.db.models import Prefetch
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 
 
@@ -435,3 +441,104 @@ class EstadisticaMaquinaria(APIView):
 
         return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
+
+class TiemposPorVueloHoraInicio(APIView):
+
+    #Estadisticas tiempo de ejecución de las tareas por vuelo
+    def get(self, request, pk=None , fecha=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+
+            def obtener_tiempo_transcurrido(datos):
+                tiempo_transcurrido = datos.annotate(
+                    tiempo_transcurrido=ExpressionWrapper(
+                        F('hora_inicio') - F('fk_turnaround__hora_inicio'), output_field=DurationField()
+                    )
+                )
+                return tiempo_transcurrido
+
+            def obtener_promedio_tiempo_transcurrido(datos):
+                promedio_tiempo_transcurrido = datos.values('fk_subtarea_id','fk_subtarea__titulo','fk_subtarea__fk_tarea__titulo',
+                                                            'fk_subtarea__fk_tarea__fk_plantilla__titulo','fk_subtarea__fk_tarea__fk_plantilla__id',
+                                                            'fk_subtarea__fk_tipo_id','fk_turnaround__fk_vuelo__fk_aerolinea__nombre','fk_turnaround__fecha_inicio').annotate(
+                    average_tiempo_transcurrido=Avg('tiempo_transcurrido')
+                )
+                return promedio_tiempo_transcurrido
+
+            datos = Hora.objects.filter(fk_turnaround__fk_vuelo__numero_vuelo=pk, fk_turnaround__fecha_inicio=fecha).values('hora_inicio', 'fk_turnaround__hora_inicio',"fk_subtarea_id",'fk_subtarea__fk_tarea__fk_plantilla__id',
+                                                                    'fk_subtarea__fk_tipo_id','fk_turnaround__fk_vuelo__fk_aerolinea__nombre','fk_turnaround__fecha_inicio')
+            tiempo_transcurrido = obtener_tiempo_transcurrido(datos)
+            promedio_tiempo_transcurrido = obtener_promedio_tiempo_transcurrido(tiempo_transcurrido)
+
+            for dato in promedio_tiempo_transcurrido:
+                dato['average_tiempo_transcurrido'] = tiempo_transcurrido_horas(dato['average_tiempo_transcurrido'])
+
+            return Response(promedio_tiempo_transcurrido, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class TiemposPorVueloHoraInicioFin(APIView):
+
+    #Hora inicio tiempo promedio de subtareas 
+    def get(self, request, pk=None, fecha=None,*args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+
+            def obtener_tiempo_transcurrido(datos):
+                tiempo_transcurrido = datos.annotate(
+                    tiempo_transcurrido=ExpressionWrapper(
+                        F('hora_fin') - F('hora_inicio'), output_field=DurationField()
+                    )
+                )
+                return tiempo_transcurrido
+
+            def obtener_promedio_tiempo_transcurrido(datos):
+                promedio_tiempo_transcurrido = datos.values('fk_subtarea_id','fk_subtarea__titulo','fk_subtarea__fk_tarea__titulo',
+                                                            'fk_subtarea__fk_tarea__fk_plantilla__titulo','fk_subtarea__fk_tarea__fk_plantilla__id',
+                                                            'fk_subtarea__fk_tipo_id', 'fk_turnaround__fk_vuelo__fk_aerolinea__nombre','fk_turnaround__fecha_inicio').annotate(
+                    average_tiempo_transcurrido=Avg('tiempo_transcurrido')
+                )
+                return promedio_tiempo_transcurrido
+
+            datos = HoraInicioFin.objects.filter(fk_turnaround__fk_vuelo__numero_vuelo=pk, fk_turnaround__fecha_inicio=fecha).values('hora_inicio', 'hora_fin',"fk_subtarea_id","fk_turnaround__hora_inicio",'fk_subtarea__fk_tarea__fk_plantilla__id',
+                                                 'fk_subtarea__fk_tipo_id', 'fk_turnaround__fk_vuelo__fk_aerolinea__nombre','fk_turnaround__fecha_inicio')
+            tiempo_transcurrido = obtener_tiempo_transcurrido(datos)
+            promedio_tiempo_transcurrido = obtener_promedio_tiempo_transcurrido(tiempo_transcurrido)
+
+            for dato in promedio_tiempo_transcurrido:
+                dato['average_tiempo_transcurrido'] = tiempo_transcurrido_horas(dato['average_tiempo_transcurrido'])
+
+            return Response(promedio_tiempo_transcurrido, status=status.HTTP_200_OK)
+
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class VuelosOnTime(APIView):
+
+    #Hora inicio tiempo promedio de subtareas 
+    def get(self, request,*args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+            # Obtener la cantidad de veces que se ha usado cada codigo_demora en turnarounds
+            turnarounds = turnaround.objects.filter(fk_vuelo__estado="Atendido").values('fk_codigos_demora__identificador','fk_codigos_demora__alpha','fk_codigos_demora__descripcion',
+                                                    'fk_codigos_demora__categoria',"fk_codigos_demora__id").annotate(count=Count('fk_codigos_demora__identificador')).order_by('fk_codigos_demora__identificador')
+            total_turnarounds = turnaround.objects.filter(fk_vuelo__estado="Atendido").count()
+            result = []
+
+            for t in turnarounds:
+                porcentaje = (t['count'] / total_turnarounds) * 100
+                result.append({
+                    'identificador': t['fk_codigos_demora__alpha'],
+                    'descripcion': t['fk_codigos_demora__descripcion'],
+                    'categoria': t['fk_codigos_demora__categoria'],
+                    'contador': t['count'],
+                    "id" : t["fk_codigos_demora__id"],
+                    'porcentaje': porcentaje
+                })
+
+
+            return Response(result, status=status.HTTP_200_OK)

@@ -1,6 +1,6 @@
 from django.urls import path
-from .api import MetricaUsoMaquinaria, MetricaTurnaroundPersonal, MetricaTurnaroundAerolineas, MetricaTurnaroundSLA, NumeroDeServicios, EstadisticaServicios, GraficaAerolineas,PorcentajeDepartamentos
-from .api import NumeroDeVuelos, PorcentajeTurnaround, HoraInicio, HoraInicioYFin, PorcentajePlantillas, PorcentajeHora, PorcentajeHoraInicioFin, EstadisticaAerolinea, PorcentajeMaquinaria
+from .api import MetricaUsoMaquinaria, MetricaTurnaroundPersonal, MetricaTurnaroundAerolineas, MetricaTurnaroundSLA, NumeroDeServicios, EstadisticaServicios, GraficaAerolineas,PorcentajeDepartamentos, TiemposPorVueloHoraInicioFin
+from .api import NumeroDeVuelos, PorcentajeTurnaround, HoraInicio, HoraInicioYFin, PorcentajePlantillas, PorcentajeHora, PorcentajeHoraInicioFin, EstadisticaAerolinea, PorcentajeMaquinaria,TiemposPorVueloHoraInicio, VuelosOnTime
 from .api import EstadisticaMaquinaria
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -62,4 +62,10 @@ urlpatterns=[
 
     #GET: Estadisticas de uso de maquinaria de las aerolineas http://127.0.0.1:8000/metricas/estadistica-maquinaria/?token=
     path('estadistica-maquinaria/', EstadisticaMaquinaria.as_view(), name='estadistica_maquinaria'),
+
+    path('tiempo-vuelos-hora-inicio/<str:pk>/<str:fecha>/', TiemposPorVueloHoraInicio.as_view(), name='tiempo_inicio'),
+
+    path('tiempo-vuelos-hora-inicio-fin/<str:pk>/<str:fecha>/', TiemposPorVueloHoraInicioFin.as_view(), name='tiempo_inicio_fin'),
+
+    path('vuelos-on-time/', VuelosOnTime.as_view(), name='vuelos_on_time'),
 ]

@@ -44,7 +44,8 @@ class aerolinea(models.Model):
     correo_secundario=models.CharField(max_length=50, null=True)
     pais=models.CharField(max_length=50, null=True)
     ciudad=models.CharField(max_length=50, null=True)
-    codigo=models.CharField(max_length=50)
+    codigo=models.CharField(max_length=50, null=True)
+    codigo_OACI = models.CharField(max_length=50, null=True)
     imagen=models.ImageField(upload_to="images/", null=True, blank=True)
 
 class plantilla(models.Model):

@@ -137,26 +137,15 @@ class Turnarounds(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                imagenes = Imagen.objects.filter(fk_turnaround_id=pk)
-                horas = Hora.objects.filter(fk_turnaround_id=pk)
-                horas_inicio_fin = HoraInicioFin.objects.filter(fk_turnaround_id=pk)
-                comentarios = Comentario.objects.filter(fk_turnaround_id=pk)
-
-                imagenes_json = json.loads(serialize('json', imagenes))
-
-                # Convertir los objetos Hora a json
-                horas_json = json.loads(serialize('json', horas))
-
-                # Convertir los objetos HoraInicioFin a json
-                horas_inicio_fin_json = json.loads(serialize('json', horas_inicio_fin))
-
-                # Convertir los objetos Comentario a json
-                comentarios_json = json.loads(serialize('json', comentarios))
+                imagenes = list(Imagen.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'imagen','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                horas = list(Hora.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                horas_inicio_fin = list(HoraInicioFin.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio', 'hora_fin','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                comentarios = list(Comentario.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'comentario','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
 
                 return Response({
-                'horas': horas_json,
-                'horas_inicio_fin': horas_inicio_fin_json,
-                'imagenes': imagenes_json,
-                'comentarios': comentarios_json
+                'horas': horas,
+                'horas_inicio_fin': horas_inicio_fin,
+                'imagenes': imagenes,
+                'comentarios': comentarios
             })
 
