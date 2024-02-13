@@ -142,6 +142,7 @@ class Turnarounds(APIView):
                 horas_inicio_fin = list(HoraInicioFin.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio', 'hora_fin','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
                 comentarios = list(Comentario.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'comentario','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
 
+
                 return Response({
                 'horas': horas,
                 'horas_inicio_fin': horas_inicio_fin,
