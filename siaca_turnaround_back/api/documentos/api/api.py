@@ -181,7 +181,7 @@ class HoraInicioYFin(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                horas_inicio_fin = list(HoraInicioFin.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio', 'hora_fin','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                horas_inicio_fin = HoraInicioFin.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio', 'hora_fin','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo')
             
                 return Response({
                 'horas_inicio_fin': horas_inicio_fin,
