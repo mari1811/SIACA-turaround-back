@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import Documento, ComentarioTurnaround, HoraInicioFinTurnaround, HoraInicioTurnaround, ImagenTurnaround, TareasTurnaround, Turnarounds
+from .api import Documento, ComentarioTurnaround, HoraInicioFinTurnaround, HoraInicioTurnaround, ImagenTurnaround, TareasTurnaround, Turnarounds, HoraInicioYFin
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -27,4 +27,6 @@ urlpatterns=[
 
     #GET: Buscar turnaround por ID con la infomación del vuelo y la plantilla asociada http://127.0.0.1:8000/documentos/tareas/<ID>/?token=
     path('turnarounds/<int:pk>/', Turnarounds.as_view(), name='turnarounds'),
+
+    path('turnarounds/horainiciofin/<int:pk>/', HoraInicioYFin.as_view(), name='hora_inicio_y_fin'),
 ]
