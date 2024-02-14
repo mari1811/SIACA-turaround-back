@@ -172,17 +172,3 @@ class Turnarounds(APIView):
                 'imagenes': imagenes,
                 'comentarios': comentarios
             })
-
-class HoraInicioYFin(APIView):
-
-    #Turnaround por ID con la infomación del vuelo y la plantilla asociada
-    def get(self, request, *args, **kwargs):
-        
-            token = request.GET.get('token')
-            token = Token.objects.filter(key = token).first()
-            if token:
-                plantillas = HoraInicioFin.objects.all()
-                plantillas_serializer = HoraInicioFinSerializer(plantillas, many = True)
-                return Response (plantillas_serializer.data, status=status.HTTP_200_OK)
-
-            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
