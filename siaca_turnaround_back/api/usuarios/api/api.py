@@ -220,7 +220,7 @@ class UsuarioHistorial(APIView):
             hourF= datetime.strptime(horaF, '%H:%M')
             min = timedelta(minutes=10)
             max = timedelta(minutes=60)
-            usuarios = usuario_turnaround.objects.filter(fecha = fecha).filter(hora_inicio__range = (hourI , hourF )).all()
+            usuarios = usuario_turnaround.objects.filter(fecha = fecha).filter(hora_inicio__range = (hourI , hourF )).all() | usuario_turnaround.objects.filter(fecha = fecha).filter(hora_fin__range = (hourI , hourF )).all()
             if usuarios:
                 usuario_serializer = UsuarioTurnaroundSerializer(usuarios, many = True)
                 return Response(usuario_serializer.data, status=status.HTTP_200_OK)
