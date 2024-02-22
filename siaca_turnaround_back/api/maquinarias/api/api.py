@@ -11,6 +11,8 @@ from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 from django.db.models import Count, Sum
 
+from django.db.models import Q
+
 
 class Maquiarias(APIView):
 
@@ -156,18 +158,26 @@ class MaquinariaHistorial(APIView):
     #Lista de maquinarias disponiles en la fecha y rango de hora
     def get(self, request, fecha=None, horaI=None, horaF=None, *args, **kwargs):
         token = request.GET.get('token')
-        token = Token.objects.filter(key = token).first()
+        token = Token.objects.filter(key=token).first()
         if token:
-            hourI= datetime.strptime(horaI, '%H:%M')
-            hourF= datetime.strptime(horaF, '%H:%M')
-            min = timedelta(minutes=1)
-            max = timedelta(minutes=1)
-            maquinarias = maquinaria_historial.objects.filter(fecha = fecha).filter(hora_inicio__range = (hourI + horaF, hourF + max)).all() | maquinaria_historial.objects.filter(fecha = fecha).filter(hora_fin__range = (hourI + horaF, hourF + max)).all()
-            if maquinarias:
-                maquinaria_serializer = MaquinariaCategoriaSerializer(maquinarias, many = True)
-                return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
-            return Response([{}])
-        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                hourI = datetime.strptime(horaI, '%H:%M')
+                hourF = datetime.strptime(horaF, '%H:%M')
+                min = timedelta(minutes=30)
+                max = timedelta(minutes=60)
+                maquinarias = maquinaria_historial.objects.filter(
+                    Q(fecha=fecha) &
+                    (Q(hora_inicio__gte=hourI, hora_inicio__lte=hourF) |
+                    Q(hora_fin__gte=hourI, hora_fin__lte=hourF) |
+                    Q(hora_inicio__lte=hourI, hora_fin__gte=hourF))
+                ).all()
+                if maquinarias:
+                    maquinaria_serializer = MaquinariaCategoriaSerializer(maquinarias, many=True)
+                    return Response(maquinaria_serializer.data, status=status.HTTP_200_OK)
+                return Response([{}])
+            except ValueError:
+                return Response({'mensaje': 'Formato de hora incorrecto'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
 
 class MetricaUsoMaquinaria(APIView):
