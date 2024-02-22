@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import usuario_api_view, UserListView, registro_usuario, Lista, Prueba, Update, DeleteUser, EstadoUsuario, Solicitudes, Contador, UsuarioHistorial, MetricaTurnaroundPersonal, Departamento, Cargo, UsuarioTurnaround
+from .api import usuario_api_view, UserListView, registro_usuario, Lista, Prueba, Update, DeleteUser, EstadoUsuario, Solicitudes, Contador, UsuarioHistorial, MetricaTurnaroundPersonal, Departamento, Cargo, UsuarioTurnaround, CorreoLista
 from api.usuarios.views import Login, Logout, PasswordReset, ResetPasswordAPI
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -71,5 +71,7 @@ urlpatterns=[
 
     #GET: Personal asociado a turnarounds http://127.0.0.1:8000/usuarios/lista/<ID>/?token=
     path('lista/<int:pk>/', UsuarioTurnaround.as_view(), name='usuario_turnaround'),
+
+    path('correo-lista/<int:pk>/', CorreoLista.as_view(), name='correo_lista'),
 
 ]

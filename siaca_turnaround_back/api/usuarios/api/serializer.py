@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models import usuario
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from api.models import usuario, usuario_turnaround, turnaround, cargo, departamento
+from api.models import usuario, usuario_turnaround, turnaround, cargo, departamento, vuelo, aerolinea
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
@@ -85,8 +85,20 @@ class IDSerialier(serializers.ModelSerializer):
         model = User
         fields = ('id',)
 
+class AerolineaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = aerolinea
+        fields = '__all__'
+
+class VuelosSerializer(serializers.ModelSerializer):
+    fk_aerolinea = AerolineaSerializer()
+    class Meta:
+        model = vuelo
+        fields = '__all__'
+
 #Serializador turnarounds 
 class TurnaroundSerializer(serializers.ModelSerializer):
+    fk_vuelo = VuelosSerializer()
     class Meta:
         model = turnaround
         fields = '__all__'
@@ -96,6 +108,7 @@ class UsuarioDatosTurnaroundSerializer(serializers.ModelSerializer):
     class Meta:
         model = usuario_turnaround
         fields = '__all__'
+
 
 #Serializador historial de personal en turnarounds con datos completos 
 class UsuarioTurnaroundSerializer(serializers.ModelSerializer):

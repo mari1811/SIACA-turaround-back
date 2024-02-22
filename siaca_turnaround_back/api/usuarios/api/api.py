@@ -263,3 +263,38 @@ class UsuarioTurnaround(APIView):
                     return Response(usuario_serializer.data, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay maquinarias asignadas para este turnaround'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class CorreoLista(APIView):
+        
+        #Lista de personal asignado a turnaround
+        def get(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key=token).first()
+            if token:
+                usuarios = usuario_turnaround.objects.filter(fk_turnaround__id=pk).order_by("fk_usuario_id").all()
+                if usuarios:
+                    usuario_serializer = UsuarioTurnaroundSerializer(usuarios, many=True)
+                    user_data = []
+                    for user in usuario_serializer.data:
+                        user_data.append({
+                            'first_name': user['fk_usuario']['fk_user']['first_name'],
+                            'last_name': user['fk_usuario']['fk_user']['last_name'],
+                            'username': user['fk_usuario']['fk_user']['username'],
+                            'cedula': user['fk_usuario']['cedula']
+                        })
+                    msg = EmailMultiAlternatives(
+                        'Lista de personal turnaround ' + ' ' + f'{usuario_serializer.data[0]["fecha"]}',
+                        'Se realizó la asignación de personal al siguiente Turnaround:'
+                        '\n\nID Turnaround: '+ f'{usuario_serializer.data[0]["fk_turnaround"]["id"]}'
+                        '\nNo. vuelo: '+ f'{usuario_serializer.data[0]["fk_turnaround"]["fk_vuelo"]["numero_vuelo"]}' +
+                        '\nAerolinea: '+ f'{usuario_serializer.data[0]["fk_turnaround"]["fk_vuelo"]["fk_aerolinea"]["nombre"]}'+
+                        '\n\nLista de personal:\n' + '\n'.join([f"{user['first_name']}, {user['last_name']} - {user['cedula']} - {user['username']}" for user in user_data]) + 
+                        f'\n\nFecha: {usuario_serializer.data[0]["fecha"]}\nHora de inicio: {usuario_serializer.data[0]["hora_inicio"]}\nHora de fin: {usuario_serializer.data[0]["hora_fin"]}\n',
+                        settings.EMAIL_HOST_USER,
+                        ["correo@gmail.com"],
+                    )
+                    msg.send()
+                    return Response(user_data, status=status.HTTP_200_OK)
+                return Response({'mensaje': 'No hay personal asignado para este turnaround'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
