@@ -160,8 +160,8 @@ class MaquinariaHistorial(APIView):
         if token:
             hourI= datetime.strptime(horaI, '%H:%M')
             hourF= datetime.strptime(horaF, '%H:%M')
-            min = timedelta(minutes=30)
-            max = timedelta(minutes=60)
+            min = timedelta(minutes=1)
+            max = timedelta(minutes=1)
             maquinarias = maquinaria_historial.objects.filter(fecha = fecha).filter(hora_inicio__range = (hourI - min, hourF + max)).all() | maquinaria_historial.objects.filter(fecha = fecha).filter(hora_fin__range = (hourI - min, hourF + max)).all()
             if maquinarias:
                 maquinaria_serializer = MaquinariaCategoriaSerializer(maquinarias, many = True)
