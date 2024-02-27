@@ -267,7 +267,7 @@ class UsuarioTurnaround(APIView):
 
 class CorreoLista(APIView):
         
-        #Lista de personal asignado a turnaround
+        #Correo con la lista del personal asignado a un Turnaround
         def get(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key=token).first()
@@ -298,3 +298,24 @@ class CorreoLista(APIView):
                     return Response(user_data, status=status.HTTP_200_OK)
                 return Response({'mensaje': 'No hay personal asignado para este turnaround'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+class ListaFiltro(APIView):
+
+    def get(self, request, *args, **kwargs):
+        #Lista de usuarios
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            if request.method == 'GET':
+                usuarios = usuario.objects.filter(
+                Q(fk_departamento__nombre="Operaciones") |
+                Q(fk_departamento__nombre="Mantenimiento") |
+                Q(fk_departamento__nombre="Servicio al Pasajero") |
+                Q(fk_departamento__nombre="Despacho de Vuelos") |
+                Q(fk_departamento__nombre="Seguridad Operacional") |
+                Q(fk_departamento__nombre="Servicios Especiales")
+                ).all()
+                datos_serializer = DatosListaSerializer(usuarios, many = True)
+                return Response (datos_serializer.data, status=status.HTTP_200_OK)
