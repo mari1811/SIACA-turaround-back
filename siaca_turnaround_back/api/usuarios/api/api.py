@@ -319,3 +319,23 @@ class ListaFiltro(APIView):
                 ).all()
                 datos_serializer = DatosListaSerializer(usuarios, many = True)
                 return Response (datos_serializer.data, status=status.HTTP_200_OK)
+            
+
+class ListaFiltroDepartamento(APIView):
+
+    def get(self, request, *args, **kwargs):
+        #Lista de usuarios
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            if request.method == 'GET':
+                departamentos = departamento.objects.filter(
+                Q(nombre="Operaciones") |
+                Q(nombre="Mantenimiento") |
+                Q(nombre="Servicio al Pasajero") |
+                Q(nombre="Despacho de Vuelos") |
+                Q(nombre="Seguridad Operacional") |
+                Q(nombre="Servicios Especiales")
+                ).all()
+                datos_serializer = DepartamentoSerializer(departamentos, many = True)
+                return Response (datos_serializer.data, status=status.HTTP_200_OK)
