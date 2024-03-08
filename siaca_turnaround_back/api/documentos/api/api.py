@@ -137,10 +137,10 @@ class Turnarounds(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                imagenes = list(Imagen.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'imagen','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
-                horas = list(Hora.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
-                horas_inicio_fin = list(HoraInicioFin.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio', 'hora_fin','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
-                comentarios = list(Comentario.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'comentario','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                imagenes = list(Imagen.objects.filter(fk_turnaround_id=pk).values('id','fk_subtarea__id','fk_subtarea__titulo', 'imagen','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                horas = list(Hora.objects.filter(fk_turnaround_id=pk).values('id','fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                horas_inicio_fin = list(HoraInicioFin.objects.filter(fk_turnaround_id=pk).values('id','fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio', 'hora_fin','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                comentarios = list(Comentario.objects.filter(fk_turnaround_id=pk).values('id','fk_subtarea__id','fk_subtarea__titulo', 'comentario','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
 
 
                 return Response({
@@ -152,23 +152,52 @@ class Turnarounds(APIView):
 
 
 
-class Turnarounds(APIView):
+class UpdateHora(generics.RetrieveUpdateDestroyAPIView):
 
-    #Turnaround por ID con la infomación del vuelo y la plantilla asociada
-    def get(self, request, pk=None, *args, **kwargs):
-        
+        #Modificar subtarea de Hora de inicio
+        def patch(self, request, pk=None, *args, **kwargs):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                imagenes = list(Imagen.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'imagen','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
-                horas = list(Hora.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
-                horas_inicio_fin = list(HoraInicioFin.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'hora_inicio', 'hora_fin','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
-                comentarios = list(Comentario.objects.filter(fk_turnaround_id=pk).values('fk_subtarea__id','fk_subtarea__titulo', 'comentario','fk_subtarea__fk_tipo__nombre','fk_subtarea__fk_tarea__titulo'))
+                hora = Hora.objects.filter(id = pk).first()
+                if hora:
+                    hora_serializer = HoraInicioSerializer(hora, data=request.data)
+                    if hora_serializer.is_valid():
+                        hora_serializer.save()
+                        return Response(hora_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No existe la subtarea'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-                return Response({
-                'horas': horas,
-                'horas_inicio_fin': horas_inicio_fin,
-                'imagenes': imagenes,
-                'comentarios': comentarios
-            })
+class UpdateHoraInicioFin(generics.RetrieveUpdateDestroyAPIView):
+
+        #Modificar subtarea de Hora de inicio y fin
+        def patch(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                hora = HoraInicioFin.objects.filter(id = pk).first()
+                if hora:
+                    hora_serializer = HoraInicioFinSerializer(hora, data=request.data)
+                    if hora_serializer.is_valid():
+                        hora_serializer.save()
+                        return Response(hora_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No existe la subtarea'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class UpdateComentario(generics.RetrieveUpdateDestroyAPIView):
+
+        #Modificar comentario
+        def patch(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                comentario = Comentario.objects.filter(id = pk).first()
+                if comentario:
+                    comentario_serializer = ComentarioSerializer(comentario, data=request.data)
+                    if comentario_serializer.is_valid():
+                        comentario_serializer.save()
+                        return Response(comentario_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No existe el comentario'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
