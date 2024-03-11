@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import DocumentosDatosSerializer, VueloSerializer, DocumentosSerializer, HoraInicioSerializer, HoraInicioFinSerializer, ImagenSerializer, ComentarioSerializer, TurnaoundSerializer
-from api.models import documento, vuelo, maquinaria, Hora, HoraInicioFin, Comentario, Imagen, turnaround
+from .serializer import DocumentosDatosSerializer, VueloSerializer, DocumentosSerializer, HoraInicioSerializer, HoraInicioFinSerializer, ImagenSerializer, ComentarioSerializer, TurnaoundSerializer, CodigoSerializer
+from api.models import documento, vuelo, maquinaria, Hora, HoraInicioFin, Comentario, Imagen, turnaround, codigos_demora
 from api.models import turnaround, subtarea, Imagen, Hora, HoraInicioFin, Comentario
 from rest_framework import filters
 from rest_framework import generics
@@ -201,3 +201,23 @@ class UpdateComentario(generics.RetrieveUpdateDestroyAPIView):
                         return Response(comentario_serializer.data, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No existe el comentario'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateCodigoDemora(generics.RetrieveUpdateDestroyAPIView):
+
+    #Modificar codigo de demora
+    def patch(self, request, pk=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key=token).first()
+        if token:
+            codigo = turnaround.objects.filter(id=pk).first()
+            if codigo:
+                codigo_demora = codigos_demora.objects.filter(id=request.data.get('fk_codigos_demora_id')).first()
+                if codigo_demora:
+                    codigo_serializer = CodigoSerializer(codigo, data=request.data)
+                    if codigo_serializer.is_valid():
+                        codigo_serializer.save(fk_codigos_demora=codigo_demora)
+                        return Response(codigo_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No existe el codigo de demora'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'No existe el turnaround'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import Documento, ComentarioTurnaround, HoraInicioFinTurnaround, HoraInicioTurnaround, ImagenTurnaround, TareasTurnaround, Turnarounds, UpdateHora, UpdateHoraInicioFin, UpdateComentario
+from .api import Documento, ComentarioTurnaround, HoraInicioFinTurnaround, HoraInicioTurnaround, ImagenTurnaround, TareasTurnaround, Turnarounds, UpdateHora, UpdateHoraInicioFin, UpdateComentario, UpdateCodigoDemora
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -36,4 +36,7 @@ urlpatterns=[
 
     #PATCH: Editar comentario con el id de la tarea http://127.0.0.1:8000/documentos/update-comentario/<ID>/?token=
     path('update-comentario/<int:pk>/', UpdateComentario.as_view(), name='update_comentario'),
+
+    #PATCH: Editar codigo de demora con el id del turnaround http://127.0.0.1:8000/documentos/update-comentario/<ID>/?token=
+    path('update-codigo/<int:pk>/', UpdateCodigoDemora.as_view(), name='update_codigo_demora'),
 ]

@@ -67,3 +67,9 @@ class TurnaoundSerializer(serializers.ModelSerializer):
         model = turnaround
         fields = '__all__'
 
+#Serializador de turnaround con datos del vuelo y plantilla
+class CodigoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = turnaround
+        fields = ("fk_codigos_demora_id",)
+
