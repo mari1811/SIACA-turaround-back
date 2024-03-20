@@ -25,7 +25,7 @@ class UsuarioTuraroundSerializer(serializers.ModelSerializer):
 class CodigosDemoraSerializer(serializers.ModelSerializer):
     class Meta:
         model = codigos_demora
-        fields = ('identificador','alpha')    
+        fields = '__all__'   
 
 #Serializador solo número de los vuelos
 class VueloSerializer(serializers.ModelSerializer):
