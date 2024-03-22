@@ -90,7 +90,7 @@ class Lista(APIView):
         token = Token.objects.filter(key = token).first()
         if token:
             if request.method == 'GET':
-                datos = usuario.objects.filter(fk_user__is_active = True).order_by("fk_usuario__fk_departamento__nombre").all()
+                datos = usuario.objects.filter(fk_user__is_active = True)
                 datos_serializer = DatosListaSerializer(datos, many = True)
                 return Response (datos_serializer.data, status=status.HTTP_200_OK)
 
@@ -257,7 +257,7 @@ class UsuarioTurnaround(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                usuarios = usuario_turnaround.objects.filter(fk_turnaround__id = pk).order_by("fk_usuario_id").all()
+                usuarios = usuario_turnaround.objects.filter(fk_turnaround__id = pk).order_by("fk_usuario__fk_departamento__nombre").all()
                 if usuarios:
                     usuario_serializer = DepartamentoUsuarioListaSerializer(usuarios,  many = True)
                     return Response(usuario_serializer.data, status=status.HTTP_200_OK)
