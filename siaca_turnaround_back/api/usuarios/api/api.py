@@ -90,7 +90,7 @@ class Lista(APIView):
         token = Token.objects.filter(key = token).first()
         if token:
             if request.method == 'GET':
-                datos = usuario.objects.filter(fk_user__is_active = True)
+                datos = usuario.objects.filter(fk_user__is_active = True).order_by("fk_departamento__nombre").all()
                 datos_serializer = DatosListaSerializer(datos, many = True)
                 return Response (datos_serializer.data, status=status.HTTP_200_OK)
 
