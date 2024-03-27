@@ -19,7 +19,7 @@ class Aerolinea(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                aerolineas = aerolinea.objects.all()
+                aerolineas = aerolinea.objects.order_by("nombre").all()
                 aerolineas_serializer = AerolineaSerializer(aerolineas, many = True)
                 return Response (aerolineas_serializer.data, status=status.HTTP_200_OK)
 

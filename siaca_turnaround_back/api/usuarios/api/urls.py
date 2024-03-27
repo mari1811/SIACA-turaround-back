@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import usuario_api_view, UserListView, registro_usuario, Lista, Prueba, Update, DeleteUser, EstadoUsuario, Solicitudes, Contador, UsuarioHistorial, MetricaTurnaroundPersonal, Departamento, Cargo, UsuarioTurnaround, CorreoLista, ListaFiltro, ListaFiltroDepartamento
+from .api import usuario_api_view, UserListView, registro_usuario, Lista, Prueba, Update, DeleteUser, EstadoUsuario, Solicitudes, Contador, UsuarioHistorial, MetricaTurnaroundPersonal, Departamento, Cargo, UsuarioTurnaround, CorreoLista, ListaFiltro, ListaFiltroDepartamento, Correos, ListaRoles
 from api.usuarios.views import Login, Logout, PasswordReset, ResetPasswordAPI
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -78,4 +78,9 @@ urlpatterns=[
 
     path('filtro-lista-departamento/', ListaFiltroDepartamento.as_view(), name='lista_filtro_departamento'),
 
+    #GET: Lista de correos registrados http://127.0.0.1:8000/usuarios/correos/?token=
+    path('correos/', Correos.as_view(), name='correos_registro'),
+
+    #GET: Lista de roles registrados http://127.0.0.1:8000/usuarios/lista-roles/?token=
+    path('lista-roles/', ListaRoles.as_view(), name='lista_roles'),
 ]

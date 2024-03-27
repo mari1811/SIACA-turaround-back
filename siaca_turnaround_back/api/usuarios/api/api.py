@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUsuarioSerializer, UpdateSeralizer
 from .serializer import EstadoUsuarioSerializer, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer, CargoSerializer, DepartamentoSerializer, DepartamentoUsuarioListaSerializer
-from api.models import usuario, usuario_turnaround, departamento, cargo
+from api.models import usuario, usuario_turnaround, departamento, cargo, rol
 from django.contrib.auth.models import User
 from rest_framework import filters
 from rest_framework import generics
@@ -304,7 +304,7 @@ class CorreoLista(APIView):
 class ListaFiltro(APIView):
 
     def get(self, request, *args, **kwargs):
-        #Lista de usuarios
+        #Lista de usuarios de los departamentos que son requeridos para los turnaround
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
@@ -324,7 +324,7 @@ class ListaFiltro(APIView):
 class ListaFiltroDepartamento(APIView):
 
     def get(self, request, *args, **kwargs):
-        #Lista de usuarios
+        #Lista de usuarios para asignación de turnarounds
         token = request.GET.get('token')
         token = Token.objects.filter(key = token).first()
         if token:
@@ -339,3 +339,26 @@ class ListaFiltroDepartamento(APIView):
                 ).all()
                 datos_serializer = DepartamentoSerializer(departamentos, many = True)
                 return Response (datos_serializer.data, status=status.HTTP_200_OK)
+
+
+class Correos(APIView):
+
+    #Lista de correos registrados
+    def get(self, request, *args, **kwargs):
+        
+            if request.method == 'GET':
+                datos = User.objects.values('username').all()
+                return Response (datos, status=status.HTTP_200_OK)
+            
+class ListaRoles(APIView):
+        
+        #Lista de Roles
+        def get(self, request, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                roles = rol.objects.values("id","rol").all()
+                if roles:
+                    return Response(roles , status=status.HTTP_200_OK)
+                return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

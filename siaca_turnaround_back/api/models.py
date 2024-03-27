@@ -9,6 +9,9 @@ class departamento(models.Model):
 class cargo(models.Model):
     nombre=models.CharField(max_length=100,blank=True,null=True)
 
+class rol(models.Model):
+    rol=models.CharField(max_length=100,blank=True,null=True)
+
 class usuario(models.Model):
     fk_user=models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
     cedula=models.BigIntegerField()
@@ -16,6 +19,7 @@ class usuario(models.Model):
     fk_departamento=models.ForeignKey(departamento,blank=True,null=True,on_delete=models.CASCADE)
     telefono=models.CharField(max_length=50)
     turno=models.CharField(max_length=50)
+    fk_rol=models.ForeignKey(rol,blank=True,null=True,on_delete=models.CASCADE)
 
 class categoria(models.Model):
     nombre=models.CharField(max_length=100)

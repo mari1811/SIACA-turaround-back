@@ -10,10 +10,10 @@ from rest_framework_simplejwt.views import (
 urlpatterns=[
 
     #GET: Numero de usos de las maquinarias http://127.0.0.1:8000/metricas/maquinarias/?token=
-    path('maquinarias/', MetricaUsoMaquinaria.as_view(), name='metrica_maquinarias'),
+    path('maquinarias/<str:fechaI>/<str:fechaF>/', MetricaUsoMaquinaria.as_view(), name='metrica_maquinarias'),
 
     #GET: Numero de turnarounds que ha participado http://127.0.0.1:8000/metricas/personal/?token=
-    path('personal/', MetricaTurnaroundPersonal.as_view(), name='metrica_personal'),
+    path('personal/<str:fechaI>/<str:fechaF>/', MetricaTurnaroundPersonal.as_view(), name='metrica_personal'),
 
     #GET: Numero de servicios que se ha realizado a cada aerolinea http://127.0.0.1:8000/metricas/aerolineas/?token=
     path('aerolineas/', MetricaTurnaroundAerolineas.as_view(), name='metrica_aerolineas'),
