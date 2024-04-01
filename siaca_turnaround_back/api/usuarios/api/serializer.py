@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models import usuario
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from api.models import usuario, usuario_turnaround, turnaround, cargo, departamento, vuelo, aerolinea
+from api.models import usuario, usuario_turnaround, turnaround, cargo, departamento, vuelo, aerolinea, rol
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
@@ -33,6 +33,12 @@ class UsuarioListaSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username','first_name','last_name')
+
+#Serializador para asignar rol
+class RolSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = usuario
+        fields = ('fk_rol_id',)
 
 #Serializador para activar el usuario
 class EstadoUsuarioSerializer(serializers.ModelSerializer):

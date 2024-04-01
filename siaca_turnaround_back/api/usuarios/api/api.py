@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUsuarioSerializer, UpdateSeralizer
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUsuarioSerializer, UpdateSeralizer, RolSerializer
 from .serializer import EstadoUsuarioSerializer, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer, CargoSerializer, DepartamentoSerializer, DepartamentoUsuarioListaSerializer
 from api.models import usuario, usuario_turnaround, departamento, cargo, rol
 from django.contrib.auth.models import User
@@ -362,3 +362,19 @@ class ListaRoles(APIView):
                     return Response(roles , status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+        #Asignar rol a un uasuario
+        def patch(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key=token).first()
+            if token:
+                user = usuario.objects.filter(fk_user_id=pk).first()
+                if user:
+                    rol_id = request.data.get('fk_rol_id')
+                    if rol_id or rol_id is not None:
+                        user.fk_rol_id = rol_id
+                    user.save()
+                    return Response({'fk_rol_id': rol_id}, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No such user exists'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)

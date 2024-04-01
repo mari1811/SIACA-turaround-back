@@ -83,4 +83,7 @@ urlpatterns=[
 
     #GET: Lista de roles registrados http://127.0.0.1:8000/usuarios/lista-roles/?token=
     path('lista-roles/', ListaRoles.as_view(), name='lista_roles'),
+
+    #PATCH: Asignar roles al perosnal http://127.0.0.1:8000/usuarios/lista-roles/<ID>/?token=
+    path('lista-roles/<int:pk>/', ListaRoles.as_view(), name='lista_roles'),
 ]
