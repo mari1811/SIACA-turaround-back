@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import  BuscarTurnaroundFecha, EliminarTurnaround, Codigos, Turnaround, TurnaroundDetalles
+from .api import  BuscarTurnaroundFecha, EliminarTurnaround, Codigos, Turnaround, TurnaroundDetalles, EditarTurnaround
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -21,4 +21,7 @@ urlpatterns=[
 
     #GET: Detalles de un turnaround por ID http://127.0.0.1:8000/turnarounds/detalles/<ID>/?token=
     path('detalles/<int:pk>/', TurnaroundDetalles.as_view(), name='detalles_turnaround'),
+
+    #PATCH: Editar turnaround por ID http://127.0.0.1:8000/turnarounds/editar/<ID>/?token=
+    path('editar/<int:pk>/', EditarTurnaround.as_view(), name='editar_turnaround'),
 ]

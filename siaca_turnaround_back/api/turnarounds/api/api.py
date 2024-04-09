@@ -54,6 +54,24 @@ class Turnaround(APIView):
                      return Response({'mensaje':'Data no válida'}, status=status.HTTP_400_BAD_REQUEST)
                 
             return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class EditarTurnaround(generics.RetrieveUpdateDestroyAPIView):
+
+        #Modificar turnaround (para editar hora fin y fecha fin)
+        def patch(self, request, pk=None, *args, **kwargs):
+            token = request.GET.get('token')
+            token = Token.objects.filter(key = token).first()
+            if token:
+                turnarounds = turnaround.objects.filter(id = pk).first()
+                if turnarounds:
+                    turnaround_serializer = TurnaroundSerializer(turnarounds, data=request.data)
+                    if turnaround_serializer.is_valid():
+                        turnaround_serializer.save()
+                        return Response(turnaround_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje':'No existe la subtarea'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class BuscarTurnaroundFecha(APIView):

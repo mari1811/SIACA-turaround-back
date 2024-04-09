@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUsuarioSerializer, UpdateSeralizer, RolSerializer
+from .serializer import UsuarioSerializer, UsuarioListaSerializer, DatosSerializer, DatosListaSerializer, IDSerialier, UpdateUsuarioSerializer, UpdateSeralizer, RolSerializer, AsistenciaSerializer
 from .serializer import EstadoUsuarioSerializer, UsuarioTurnaroundSerializer, UsuarioDatosTurnaroundSerializer, CargoSerializer, DepartamentoSerializer, DepartamentoUsuarioListaSerializer
 from api.models import usuario, usuario_turnaround, departamento, cargo, rol
 from django.contrib.auth.models import User
@@ -378,3 +378,21 @@ class ListaRoles(APIView):
                     return Response({'fk_rol_id': rol_id}, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No such user exists'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AsistenciaUsuario(APIView):
+    
+    #Cambiar el estado de la asistencia en el turnaround con el que código QR
+    def patch(self, request, id=None, ci=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token_object = Token.objects.filter(key=token).first()
+        if token_object:
+            user = usuario_turnaround.objects.filter(fk_turnaround=id, fk_usuario__cedula=ci).first()
+            if user:
+                usuario_serializer = AsistenciaSerializer(user, data={"asistencia": True})
+                if usuario_serializer.is_valid():
+                    usuario_serializer.save()
+                    return Response(usuario_serializer.data, status=status.HTTP_200_OK)
+                return Response({'mensaje': 'Datos inválidos'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje': 'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)

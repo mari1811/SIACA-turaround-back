@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import usuario_api_view, UserListView, registro_usuario, Lista, Prueba, Update, DeleteUser, EstadoUsuario, Solicitudes, Contador, UsuarioHistorial, MetricaTurnaroundPersonal, Departamento, Cargo, UsuarioTurnaround, CorreoLista, ListaFiltro, ListaFiltroDepartamento, Correos, ListaRoles
+from .api import usuario_api_view, UserListView, registro_usuario, Lista, Prueba, Update, DeleteUser, EstadoUsuario, Solicitudes, Contador, UsuarioHistorial, MetricaTurnaroundPersonal, Departamento, Cargo, UsuarioTurnaround, CorreoLista, ListaFiltro, ListaFiltroDepartamento, Correos, ListaRoles, AsistenciaUsuario
 from api.usuarios.views import Login, Logout, PasswordReset, ResetPasswordAPI
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -86,4 +86,7 @@ urlpatterns=[
 
     #PATCH: Asignar roles al perosnal http://127.0.0.1:8000/usuarios/lista-roles/<ID>/?token=
     path('lista-roles/<int:pk>/', ListaRoles.as_view(), name='lista_roles'),
+
+    #PATCH: Marcar la asistencia en el turnaround del personal http://127.0.0.1:8000/usuarios/asistecia/<ID>/<CEDULA>/?token=
+    path('asistencia/<int:id>/<int:ci>/', AsistenciaUsuario.as_view(), name='asistencia_usuario'),
 ]

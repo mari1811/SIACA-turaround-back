@@ -46,6 +46,12 @@ class EstadoUsuarioSerializer(serializers.ModelSerializer):
         model = User
         fields = ('is_active',)
 
+#Serializador para activar el usuario
+class AsistenciaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = usuario_turnaround
+        fields = ('asistencia',)
+
 #Serializador datos completos de la tabla User
 class DatosSerializer(serializers.ModelSerializer):
     class Meta:

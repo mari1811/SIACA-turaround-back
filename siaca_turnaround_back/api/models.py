@@ -135,6 +135,7 @@ class usuario_turnaround(models.Model):
     hora_inicio=models.TimeField(blank=True,null=True)
     hora_fin=models.TimeField(blank=True,null=True)
     fecha=models.DateField(blank=True,null=True)
+    asistencia=models.BooleanField(blank=True,null=True, default=False)
 
 class Imagen(models.Model):
     fk_turnaround=models.ForeignKey(turnaround,blank=True,null=True,on_delete=models.CASCADE)
