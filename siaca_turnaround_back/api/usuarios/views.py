@@ -15,6 +15,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from api.models import usuario, rol
 
 
 
@@ -27,10 +28,16 @@ class Login(ObtainAuthToken):
         if login_serializer.is_valid():
             user = login_serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user = user)
+            u = usuario.objects.filter(fk_user_id=user.id).first()
             if created:
                 return Response({
                     'token': token.key,
-                    'value': True
+                    'value': True,
+                    'username': user.username,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'id': user.id,
+                    'rol': u.fk_rol_id
                 })
             else: 
                 token.delete()
@@ -41,7 +48,8 @@ class Login(ObtainAuthToken):
                     'username': user.username,
                     'first_name': user.first_name,
                     'last_name': user.last_name,
-                    'id': user.id
+                    'id': user.id,
+                    'rol': u.fk_rol_id
                 })
             
         else:

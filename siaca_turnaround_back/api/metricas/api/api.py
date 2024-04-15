@@ -63,7 +63,7 @@ class MetricaTurnaroundAerolineas(APIView):
             token = request.GET.get('token')
             token = Token.objects.filter(key = token).first()
             if token:
-                aerolineas = vuelo.objects.values('fk_aerolinea__nombre').annotate(contador=Count('fk_aerolinea__nombre')).filter(contador__gt=0)
+                aerolineas = vuelo.objects.values('fk_aerolinea__nombre').annotate(contador=Count('fk_aerolinea__nombre')).filter(contador__gt=0, estado="Finalizado")
                 if aerolineas:
                     return Response( aerolineas, status=status.HTTP_200_OK)
                 return Response({'mensaje':'No hay aerolineas'}, status=status.HTTP_400_BAD_REQUEST)
@@ -91,23 +91,24 @@ class MetricaTurnaroundSLA(APIView):
 
 class PorcentajeTurnaround(APIView):
 
-    #Porcentaje turnarounds por aerolinea
+    # Porcentaje turnarounds por aerolinea realizados
     def get(self, request, *args, **kwargs):
         token = request.GET.get('token')
-        token = Token.objects.filter(key = token).first()
+        token = Token.objects.filter(key=token).first()
         if token:
             if request.method == 'GET':
-                plantillas = turnaround.objects.values('fk_vuelo__fk_aerolinea__nombre','fk_vuelo__fk_aerolinea__id').annotate(
-                            contador=Count('fk_vuelo__fk_aerolinea__nombre'),
-                            porcentaje=ExpressionWrapper(
-                            Count('fk_vuelo__fk_aerolinea__nombre') * 100 / turnaround.objects.count(),
-                            output_field=CharField()),
-                            percent=Concat('porcentaje', Value('%'), output_field=CharField()))
-                            
-                return Response( plantillas , status=status.HTTP_200_OK)
-            return Response({'mensaje':'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+                filtered_turnarounds = turnaround.objects.filter(fk_vuelo__estado="Finalizado")
+                aerolineas = filtered_turnarounds.values('fk_vuelo__fk_aerolinea__nombre', 'fk_vuelo__fk_aerolinea__id').annotate(
+                    contador=Count('fk_vuelo__fk_aerolinea__nombre'),
+                    porcentaje=ExpressionWrapper(
+                        Count('fk_vuelo__fk_aerolinea__nombre') * 100 / filtered_turnarounds.count(),
+                        output_field=CharField()),
+                    percent=Concat('porcentaje', Value('%'), output_field=CharField()))
+                return Response(aerolineas, status=status.HTTP_200_OK)
+            return Response({'mensaje': 'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
     
+
 #Clase que convierte minutos en horas
 class DiffInMinutes(Func):
     function = 'TIMESTAMPDIFF'
@@ -253,7 +254,7 @@ class NumeroDeVuelos(APIView):
         token = Token.objects.filter(key = token).first()
         if token:
             if request.method == 'GET':
-                vuelos = vuelo.objects.filter(estado = "No ha llegado").count()
+                vuelos = vuelo.objects.filter(estado = "Finalizado").count()
                             
                 return Response( {"numero_servicios": vuelos} , status=status.HTTP_200_OK)
             return Response({'mensaje':'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
@@ -268,7 +269,7 @@ class NumeroDeServicios(APIView):
         token = Token.objects.filter(key = token).first()
         if token:
             if request.method == 'GET':
-                servicios = vuelo.objects.values('tipo_servicio__nombre').annotate(contador=Count('id')).filter(contador__gt=0)
+                servicios = vuelo.objects.values('tipo_servicio__nombre').annotate(contador=Count('id')).filter(contador__gt=0, estado = "Finalizado")
                             
                 return Response( servicios , status=status.HTTP_200_OK)
             return Response({'mensaje':'No hay turnarounds'}, status=status.HTTP_400_BAD_REQUEST)
@@ -325,7 +326,7 @@ class EstadisticaServicios(APIView):
         token = Token.objects.filter(key=token).first()
         if token:
 
-            datos = vuelo.objects.values('tipo_servicio__nombre').annotate(aerolinea=Max('fk_aerolinea__nombre')).order_by('tipo_servicio__nombre')
+            datos = vuelo.objects.filter(estado="Finalizado").values('tipo_servicio__nombre').annotate(aerolinea=Max('fk_aerolinea__nombre')).order_by('tipo_servicio__nombre')
 
             return Response(datos, status=status.HTTP_200_OK)
 
@@ -524,9 +525,9 @@ class VuelosOnTime(APIView):
         token = Token.objects.filter(key=token).first()
         if token:
             # Obtener la cantidad de veces que se ha usado cada codigo_demora en turnarounds
-            turnarounds = turnaround.objects.filter(fk_vuelo__estado="Atendido").values('fk_codigos_demora__identificador','fk_codigos_demora__alpha','fk_codigos_demora__descripcion',
+            turnarounds = turnaround.objects.filter(fk_vuelo__estado="Finalizado").values('fk_codigos_demora__identificador','fk_codigos_demora__alpha','fk_codigos_demora__descripcion',
                                                     'fk_codigos_demora__categoria',"fk_codigos_demora__id").annotate(count=Count('fk_codigos_demora__identificador')).order_by('fk_codigos_demora__identificador')
-            total_turnarounds = turnaround.objects.filter(fk_vuelo__estado="Atendido").count()
+            total_turnarounds = turnaround.objects.filter(fk_vuelo__estado="Finalizado").count()
             result = []
 
             for t in turnarounds:
