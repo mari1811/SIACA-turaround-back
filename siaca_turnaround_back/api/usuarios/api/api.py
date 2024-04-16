@@ -406,6 +406,7 @@ class AsistenciaUsuario(APIView):
             personal = usuario_turnaround.objects.filter(fk_turnaround=id, fk_usuario__cedula=ci).first()
             if personal:
                 return Response({'value': True} , status=status.HTTP_200_OK)
-            return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'value': False}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
         
