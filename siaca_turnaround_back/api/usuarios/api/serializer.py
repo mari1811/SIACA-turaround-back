@@ -76,11 +76,19 @@ class UpdateSeralizer(serializers.ModelSerializer):
         model = User
         fields = ('first_name','last_name')
 
+
+#Serializador rol
+class RolSeralizer(serializers.ModelSerializer):
+    class Meta:
+        model = rol
+        fields = '__all__'
+
 #Serializador usuario con todos los datos     
 class DatosListaSerializer(serializers.ModelSerializer):
     fk_user = DatosSerializer()
     fk_departamento = DepartamentoSerializer()
     fk_cargo = CargoSerializer()
+    fk_rol = RolSeralizer()
     class Meta:
         model = usuario
         fields = '__all__'
