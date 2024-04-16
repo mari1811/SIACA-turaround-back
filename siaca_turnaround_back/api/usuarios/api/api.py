@@ -396,3 +396,16 @@ class AsistenciaUsuario(APIView):
                 return Response({'mensaje': 'Datos inválidos'}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje': 'No se ha encontrado el usuario'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje': 'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    #Personal asistente en el turnaround
+    def get(self, request, id=None, ci=None, *args, **kwargs):
+        token = request.GET.get('token')
+        token = Token.objects.filter(key = token).first()
+        if token:
+            personal = usuario_turnaround.objects.filter(fk_turnaround=id, fk_usuario__cedula=ci).first()
+            if personal:
+                return Response({'value': True} , status=status.HTTP_200_OK)
+            return Response({'mensaje':'No hay maquinarias en esta categoria'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
+        
