@@ -407,6 +407,6 @@ class AsistenciaUsuario(APIView):
             if personal:
                 return Response({'value': True} , status=status.HTTP_200_OK)
             else:
-                return Response({'value': False}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'value': False}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Token no válido'}, status=status.HTTP_400_BAD_REQUEST)
         
