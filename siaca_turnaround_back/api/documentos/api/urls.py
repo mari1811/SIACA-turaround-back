@@ -1,5 +1,5 @@
 from django.urls import path
-from .api import Documento, ComentarioTurnaround, HoraInicioFinTurnaround, HoraInicioTurnaround, ImagenTurnaround, TareasTurnaround, Turnarounds, UpdateHora, UpdateHoraInicioFin, UpdateComentario, UpdateCodigoDemora
+from .api import Documento, ComentarioTurnaround, HoraInicioFinTurnaround, HoraInicioTurnaround, ImagenTurnaround, TareasTurnaround, Turnarounds, UpdateHora, UpdateHoraInicioFin, UpdateComentario, UpdateCodigoDemora, TurnaroundCorreo
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -25,7 +25,7 @@ urlpatterns=[
     #GET: Buscar turnaround por ID con la infomación del vuelo y la plantilla asociada http://127.0.0.1:8000/documentos/tareas/<ID>/?token=
     path('tareas/<int:pk>/', TareasTurnaround.as_view(), name='tareas_lista'),
 
-    #GET: Buscar turnaround por ID con la infomación del vuelo y la plantilla asociada http://127.0.0.1:8000/documentos/tareas/<ID>/?token=
+    #GET: Buscar turnaround por ID con la infomación del vuelo y la plantilla asociada http://127.0.0.1:8000/documentos/turnarounds/<ID>/?token=
     path('turnarounds/<int:pk>/', Turnarounds.as_view(), name='turnarounds'),
 
     #PATCH: Editar subtareas de tipo hora inicio con el id de la tarea http://127.0.0.1:8000/documentos/update-hora/<ID>/?token=
@@ -39,4 +39,7 @@ urlpatterns=[
 
     #PATCH: Editar codigo de demora con el id del turnaround http://127.0.0.1:8000/documentos/update-comentario/<ID>/?token=
     path('update-codigo/<int:pk>/', UpdateCodigoDemora.as_view(), name='update_codigo_demora'),
+
+    #GET: Buscar turnaround por ID con la infomación del vuelo y la plantilla asociada http://127.0.0.1:8000/documentos/turnaround-correo/<ID>/?token=
+    path('turnaround-correo/<int:pk>/', TurnaroundCorreo.as_view(), name='turnaround_correo'),
 ]

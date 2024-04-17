@@ -292,6 +292,7 @@ class CorreoLista(APIView):
                         '\n\nLista de personal:\n' + '\n'.join([f"{user['first_name']}, {user['last_name']} - {user['cedula']} - {user['username']}" for user in user_data]) + 
                         f'\n\nFecha: {usuario_serializer.data[0]["fecha"]}\nHora de inicio: {usuario_serializer.data[0]["hora_inicio"]}\nHora de fin: {usuario_serializer.data[0]["hora_fin"]}\n',
                         settings.EMAIL_HOST_USER,
+                        #CORREO DEL ADMINISTRADOR
                         ["correo@gmail.com"],
                     )
                     msg.send()

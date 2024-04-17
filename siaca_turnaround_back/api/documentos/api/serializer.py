@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import documento, vuelo, Hora, HoraInicioFin, Comentario, Imagen, turnaround, plantilla
+from api.models import documento, vuelo, Hora, HoraInicioFin, Comentario, Imagen, turnaround, plantilla, aerolinea, tipo_servicio, tipo_vuelo, ciudades, codigos_demora
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
@@ -53,9 +53,47 @@ class PlantillaSerializer(serializers.ModelSerializer):
         model = plantilla
         fields = '__all__'
 
-#Serializador de vuelo con su plantilla
+#Serializador de todos los datos de AEROLINEA
+class AerolineaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = aerolinea
+        fields = '__all__'
+
+#Serializador de todos los datos de TIPO SERVICIO
+class TipoServicioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = tipo_servicio
+        fields = '__all__'
+
+#Serializador de todos los datos de TIPO DE VUELO
+class TipoVueloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = tipo_vuelo
+        fields = '__all__'
+
+#Serializador de todos los datos de CIUDADES
+class CiudadesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ciudades
+        fields = '__all__' 
+
+
+#Serializador de todos los datos de CODIGO DE DEMORA
+class CodigoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = codigos_demora
+        fields = '__all__' 
+
+
+#Serializador de vuelo con TODOS LOS DATOS
 class VueloSerializer(serializers.ModelSerializer):
     fk_plantilla = PlantillaSerializer()
+    fk_aerolinea = AerolineaSerializer()
+    tipo_vuelo = TipoVueloSerializer()
+    tipo_servicio = TipoServicioSerializer()
+    stn_id = CiudadesSerializer()
+    lugar_salida = CiudadesSerializer()
+    lugar_destino = CiudadesSerializer()
     class Meta:
         model = vuelo
         fields = '__all__'
@@ -63,6 +101,7 @@ class VueloSerializer(serializers.ModelSerializer):
 #Serializador de turnaround con datos del vuelo y plantilla
 class TurnaoundSerializer(serializers.ModelSerializer):
     fk_vuelo= VueloSerializer()
+    fk_codigos_demora = CodigoSerializer()
     class Meta:
         model = turnaround
         fields = '__all__'
