@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -93,14 +94,12 @@ WSGI_APPLICATION = 'siaca_turnaround_back.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'siaca',
-        'HOST':'localhost',
-        'PORT':'3306',
-        'USER':'root',
-        'PASSWORD':'admin',
-        'OPTIONS':{
-            'init_command':"SET sql_mode='STRICT_TRANS_TABLES'"
-        }
+        'NAME': config('DATABASE_NAME'),
+        'HOST': config('DATABASE_HOST'),
+        'PORT': config('DATABASE_PORT', cast=int),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'OPTIONS': eval(config('DATABASE_OPTIONS')),
     }
 }
 
@@ -162,10 +161,10 @@ PASSWORD_HASHERS = [
   'django.contrib.auth.hashers.CryptPasswordHasher',
 ]
 
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "recuperarclave05@gmail.com"
-EMAIL_HOST_PASSWORD = "ppoi gjsn quqs ocej"
+#CORREO
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')

@@ -26,11 +26,15 @@ def usuario_api_view(request):
     #Lista de uausarios
     if request.method == 'GET':
         usuarios = User.objects.all()
-        usuarios_serializer = UsuarioListaSerializer(usuarios, many = True)
+        usuarios_serializer = DatosListaSerializer(usuarios, many = True)
         return Response (usuarios_serializer.data, status=status.HTTP_200_OK)
     
     #Crear un usuario
     elif request.method == 'POST':
+        #Busca el correo del Administrador
+        datos = usuario.objects.filter(fk_rol_id=1).first()
+        datos_serializer = DatosListaSerializer(datos)
+        
         usuarios_serializer = UsuarioSerializer(data = request.data)
         if usuarios_serializer.is_valid():
             usuarios_serializer.save()
@@ -40,7 +44,7 @@ def usuario_api_view(request):
             'Tiene una nueva solicitud de usuario en el sistema de SIACA\n',
             settings.EMAIL_HOST_USER,
             #Correo del administrador
-            ["."]
+            [datos_serializer.data["fk_user"]["username"]]
         )
             msg.send()
             return Response(usuarios_serializer.data, status=status.HTTP_201_CREATED)
@@ -274,8 +278,13 @@ class CorreoLista(APIView):
             if token:
                 usuarios = usuario_turnaround.objects.filter(fk_turnaround__id=pk).order_by("fk_usuario_id").all()
                 if usuarios:
+                    #Busca el correo del administrador
+                    datos = usuario.objects.filter(fk_rol_id=1).first()
+                    datos_serializer = DatosListaSerializer(datos)
                     usuario_serializer = UsuarioTurnaroundSerializer(usuarios, many=True)
                     user_data = []
+
+                    #Lista de personal asignado
                     for user in usuario_serializer.data:
                         user_data.append({
                             'first_name': user['fk_usuario']['fk_user']['first_name'],
@@ -283,6 +292,8 @@ class CorreoLista(APIView):
                             'username': user['fk_usuario']['fk_user']['username'],
                             'cedula': user['fk_usuario']['cedula']
                         })
+
+                    #Correo que se envia al administrador
                     msg = EmailMultiAlternatives(
                         'Lista de personal turnaround ' + ' ' + f'{usuario_serializer.data[0]["fecha"]}',
                         'Se realizó la asignación de personal al siguiente Turnaround:'
@@ -293,7 +304,7 @@ class CorreoLista(APIView):
                         f'\n\nFecha: {usuario_serializer.data[0]["fecha"]}\nHora de inicio: {usuario_serializer.data[0]["hora_inicio"]}\nHora de fin: {usuario_serializer.data[0]["hora_fin"]}\n',
                         settings.EMAIL_HOST_USER,
                         #CORREO DEL ADMINISTRADOR
-                        ["correo@gmail.com"],
+                        [datos_serializer.data["fk_user"]["username"]],
                     )
                     msg.send()
                     return Response(user_data, status=status.HTTP_200_OK)

@@ -214,7 +214,7 @@ class TurnaroundCorreo(APIView):
                 message += f'<p style=color: #D5D8DC >*Esto es un reporte preliminar, el documento oficial será enviado posteriormente por Siaca*</p>\n'
 
                 from_email = settings.EMAIL_HOST_USER
-                to_email = [documento_serializer.data["fk_vuelo"]["fk_aerolinea"]["correo"]]
+                to_email = [documento_serializer.data["fk_vuelo"]["fk_aerolinea"]["correo"],documento_serializer.data["fk_vuelo"]["fk_aerolinea"]["correo_secundario"]]
 
                 email = EmailMultiAlternatives(subject, message, from_email, to_email)
                 email.attach_alternative(message, "text/html")
